@@ -17,7 +17,7 @@ namespace GS.Gltf.Collision.SharpGltf
         {
             var reader = new GltfReader(Settings.ModelPaths);
             var models = reader.Models;
-            if (Settings.CheckNodesCollisionIntoModels)
+            if (Settings.InModelDetection )
             {
                 foreach (var model in models)
                 {
@@ -29,7 +29,7 @@ namespace GS.Gltf.Collision.SharpGltf
             var checkedModelCollisionPairs = CheckModelsCollisionPairs(modelCollisionPairs);
 
             List<ElementCollisionPair> checkedNodesCollisionPairs = null;
-            if (Settings.CheckNodesCollisionBetweenModels)
+            if (Settings.ModelPaths.Count > 1)
             {
                 checkedNodesCollisionPairs = MakeAndCheckElementCollisionPair(checkedModelCollisionPairs);
             }
@@ -128,7 +128,7 @@ namespace GS.Gltf.Collision.SharpGltf
 
         private bool CheckCollision(ICollidable firstObject, ICollidable secondObject)
         {
-            return firstObject.GetBoundingBox().IsCollideWith(secondObject.GetBoundingBox(), Settings.Delta);
+            return firstObject.GetBoundingBox().IsCollideWith(secondObject.GetBoundingBox());
         }
 
 

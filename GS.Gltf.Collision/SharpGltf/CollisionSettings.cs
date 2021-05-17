@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace GS.Gltf.Collision.SharpGltf
@@ -8,10 +9,38 @@ namespace GS.Gltf.Collision.SharpGltf
     {
         public List<string> ModelPaths {get; set;}
 
-        public bool CheckNodesCollisionBetweenModels { get; set; } = false;
+        public bool InterModelDetection  { get; set; } = false;
 
-        public bool CheckNodesCollisionIntoModels { get; set; } = false;
+        public bool InModelDetection { get; set; } = false;
 
-        public float Delta { get; set; } = 0;
+        public float Delta { get; set; } = CollisionConstants.Tolerance;
+
+        public CollisionSettings()
+        {
+
+        }
+
+        public CollisionSettings(List<string> modelPaths)
+        {
+            if (modelPaths.Count == 0)
+            {
+                throw new InvalidOperationException("Add at least one path into list");
+            }
+            foreach (var path in modelPaths)
+            {
+                if (!File.Exists(path))
+                {
+                    modelPaths.Remove(path);
+                }
+            }
+            if (modelPaths.Count == 0)
+            {
+                throw new InvalidOperationException("there arent any valid path in list");
+            }
+            if (modelPaths.Count == 1)
+            {
+                InModelDetection = true;
+            }
+        }
     }
 }

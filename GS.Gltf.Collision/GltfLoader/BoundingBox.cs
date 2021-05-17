@@ -4,26 +4,23 @@ using System.Text;
 using glTFLoader.Schema;
 using glTFLoader;
 using System.Linq;
+using System.Numerics;
+using GS.Gltf.Collision.SharpGltf;
 
 namespace GS.Gltf.Collision
 {
     public class BoundingBox
     {
-        private const int BOUNDING_BOX_DIMENSIONALITY = 3;
+        private const int VECTOR_3D_DIMENSION = 3;
         private const int X_DIM = 0;
         private const int Y_DIM = 1;
         private const int Z_DIM = 2;
 
-        public float[] Min = new float[BOUNDING_BOX_DIMENSIONALITY];
-        public float[] Max = new float[BOUNDING_BOX_DIMENSIONALITY];
+        public float[] Min = new float[VECTOR_3D_DIMENSION];
+        public float[] Max = new float[VECTOR_3D_DIMENSION];
 
-        private float MaxX { get; }
-        private float MaxY { get; }
-        private float MaxZ { get; }
-
-        private float MinX { get; }
-        private float MinY { get; }
-        private float MinZ { get; }
+        public Vector3 MinV;
+        public Vector3 MaxV;
 
         public BoundingBox(List<Accessor> accessors)
         {
@@ -36,104 +33,50 @@ namespace GS.Gltf.Collision
                 minVectors.Add(accessor.Min);
             }
 
-            for (int dim = 0; dim < BOUNDING_BOX_DIMENSIONALITY; dim++)
+            for (int dim = 0; dim < VECTOR_3D_DIMENSION; dim++)
             {
-                Min[dim] = GetMinValueByIndex(minVectors, dim);
-                Max[dim] = GetMaxValueByIndex(maxVectors, dim);
+                Min[dim] = minVectors.Min(v => v[dim]);
+                Max[dim] = minVectors.Max(v => v[dim]);
             }
 
-            MaxX = Max[X_DIM];
-            MaxY = Max[Y_DIM];
-            MaxZ = Max[Z_DIM];
+            MaxV.X = Max[X_DIM];
+            MaxV.Y = Max[Y_DIM];
+            MaxV.Z = Max[Z_DIM];
 
-            MinX = Min[X_DIM];
-            MinY = Min[Y_DIM];
-            MinZ = Min[Z_DIM];
+            MinV.X = Min[X_DIM];
+            MinV.Y = Min[Y_DIM];
+            MinV.Z = Min[Z_DIM];
         }
 
         public BoundingBox(Accessor accessor)
         {
-            MaxX = accessor.Max[X_DIM];
-            MaxY = accessor.Max[Y_DIM];
-            MaxZ = accessor.Max[Z_DIM];
+            MaxV.X = accessor.Max[X_DIM];
+            MaxV.Y = accessor.Max[Y_DIM];
+            MaxV.Z = accessor.Max[Z_DIM];
 
-            MinX = accessor.Min[X_DIM];
-            MinY = accessor.Min[Y_DIM];
-            MinZ = accessor.Min[Z_DIM];
+            MinV.X = accessor.Min[X_DIM];
+            MinV.Y = accessor.Min[Y_DIM];
+            MinV.Z = accessor.Min[Z_DIM];
         }
 
         public BoundingBox(float[] max, float[] min)
         {
-            MaxX = max[X_DIM];
-            MaxY = max[Y_DIM];
-            MaxZ = max[Z_DIM];
+            MaxV.X = max[X_DIM];
+            MaxV.Y = max[Y_DIM];
+            MaxV.Z = max[Z_DIM];
 
-            MinX = min[X_DIM];
-            MinY = min[Y_DIM];
-            MinZ = min[Z_DIM];
+            MinV.X = min[X_DIM];
+            MinV.Y = min[Y_DIM];
+            MinV.Z = min[Z_DIM];
         }
 
-        private float GetMaxValueByIndex(List<float[]> arrays, int index)
+        public bool IsCollideWith(BoundingBox other)
         {
-            var maxValue = (from array in arrays select array[index]).Max();
-            return maxValue;
-        }
-
-        private float GetMinValueByIndex(List<float[]> arrays, int index)
-        {
-            var minValue = (from array in arrays select array[index]).Min();
-            return minValue;
-        }
-
-        public bool IsCollideWith(BoundingBox other, float delta = 0)
-        {
-            BoundingBox xLeftObject;
-            BoundingBox xRightObject;
-
-            BoundingBox yLeftObject ;
-            BoundingBox yRightObject;
-
-            BoundingBox zLeftObject;
-            BoundingBox zRightObject;
-
-            if (MinX >= other.MinX)
-            {
-                xLeftObject = other;
-                xRightObject = this;
-            }
-            else
-            {
-                xLeftObject = this;
-                xRightObject = other;
-            }
-
-            if (MinY >= other.MinY)
-            {
-                yLeftObject = other;
-                yRightObject = this;
-            }
-            else
-            {
-                yLeftObject = this;
-                yRightObject = other;
-            }
-
-            if (MinZ >= other.MinZ)
-            {
-                zLeftObject = other;
-                zRightObject = this;
-            }
-            else
-            {
-                zLeftObject = this;
-                zRightObject = other;
-            }
-
-            bool isCollideByX = xRightObject.MinX < xLeftObject.MaxX + delta && xLeftObject.MaxX + delta > xRightObject.MinX;
-            bool isCollideByY = yRightObject.MinY < yLeftObject.MaxY + delta && yLeftObject.MaxY + delta > yRightObject.MinY;
-            bool isCollideByZ = zRightObject.MinZ < zLeftObject.MaxZ + delta && zLeftObject.MaxZ + delta > zRightObject.MinZ;
-
-            return isCollideByX && isCollideByY && isCollideByZ;
+            float delta = CollisionConstants.Tolerance;
+            return
+            (Math.Max(this.MaxV.X, other.MaxV.X) - Math.Min(this.MinV.X, other.MinV.X) + delta < this.MaxV.X - this.MinV.X + other.MaxV.X - other.MinV.X) &&
+            (Math.Max(this.MaxV.Y, other.MaxV.Y) - Math.Min(this.MinV.Y, other.MinV.Y) + delta < this.MaxV.Y - this.MinV.Y + other.MaxV.Y - other.MinV.Y) &&
+            (Math.Max(this.MaxV.Z, other.MaxV.Z) - Math.Min(this.MinV.Z, other.MinV.Z) + delta < this.MaxV.Z - this.MinV.Z + other.MaxV.Z - other.MinV.Z);
         }
     }
 }

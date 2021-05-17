@@ -15,25 +15,6 @@ namespace GS.Gltf.Collision
       
         public Main()
         {
-
-            List<string> inputfiles = new List<string>()
-            {
-               "C:\\gltf\\collision\\transofrms\\test2021.gltf",
-               "C:\\gltf\\collision\\test3\\test2021InsideCollision.gltf",
-               "C:\\gltf\\collision\\Incollision\\test2021InsideCollision.gltf"
-            };
-
-            var settings = new CollisionSettings()
-            {
-                ModelPaths = inputfiles,
-                CheckNodesCollisionBetweenModels = true,
-                CheckNodesCollisionIntoModels = true,
-                Delta = 0.1f,
-            };
-
-            var detector = new CollisionDetector(settings);
-            var detectResult = detector.Detect();
-
         }    
     }
 }

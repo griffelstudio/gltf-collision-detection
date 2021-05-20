@@ -21,9 +21,8 @@ namespace GS.Gltf.Collision.Tests
                 Path.Combine("C:","gltf","collision","Incollision","test2021InsideCollision.gltf"),
             };
 
-            var settings = new CollisionSettings()
+            var settings = new CollisionSettings(inputfiles)
             {
-                ModelPaths = inputfiles,
                 InterModelDetection  = true,
                 InModelDetection  = true,
                 Delta = 0.1f,
@@ -37,10 +36,10 @@ namespace GS.Gltf.Collision.Tests
         [Test]
         public void TestCollider()
         {
-            Assert.IsTrue(TestObjects.box1.IsCollideWith(TestObjects.box2, 1));
-            Assert.IsFalse(TestObjects.box2.IsCollideWith(TestObjects.box4, 1));
-            Assert.IsFalse(TestObjects.box1.IsCollideWith(TestObjects.box4, 1));
-            Assert.IsFalse(TestObjects.box4.IsCollideWith(TestObjects.box5, 1));
+            Assert.IsTrue(TestObjects.box1.IsCollideWith(TestObjects.box2));
+            Assert.IsFalse(TestObjects.box2.IsCollideWith(TestObjects.box4));
+            Assert.IsFalse(TestObjects.box1.IsCollideWith(TestObjects.box4));
+            Assert.IsFalse(TestObjects.box4.IsCollideWith(TestObjects.box5));
         }
     }
 }

@@ -15,11 +15,6 @@ namespace GS.Gltf.Collision.SharpGltf
 
         public float Delta { get; set; } = CollisionConstants.Tolerance;
 
-        public CollisionSettings()
-        {
-
-        }
-
         public CollisionSettings(List<string> modelPaths)
         {
             if (modelPaths.Count == 0)

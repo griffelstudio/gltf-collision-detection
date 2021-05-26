@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30804.86
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GS.Gltf.Collision", "GS.Gltf.Collision\GS.Gltf.Collision.csproj", "{44102E29-593A-4D5C-B9D4-A75B02FE932E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GS.Gltf.Collision.Tests", "GS.Gltf.Collision.Tests\GS.Gltf.Collision.Tests.csproj", "{4947981B-177F-4D99-87CE-F056CE51AEF4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{44102E29-593A-4D5C-B9D4-A75B02FE932E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44102E29-593A-4D5C-B9D4-A75B02FE932E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44102E29-593A-4D5C-B9D4-A75B02FE932E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44102E29-593A-4D5C-B9D4-A75B02FE932E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4947981B-177F-4D99-87CE-F056CE51AEF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4947981B-177F-4D99-87CE-F056CE51AEF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4947981B-177F-4D99-87CE-F056CE51AEF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4947981B-177F-4D99-87CE-F056CE51AEF4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {01CDD08A-E4A9-4C68-9836-65E85A41E698}
+	EndGlobalSection
+EndGlobal

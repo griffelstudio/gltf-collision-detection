@@ -17,25 +17,27 @@ namespace GS.Gltf.Collision.SharpGltf
 
         public CollisionSettings(List<string> modelPaths)
         {
-            if (modelPaths is object)
+            if (modelPaths is null)
             {
-                foreach (var path in modelPaths)
+                return;
+            }
+
+            foreach (var path in modelPaths)
+            {
+                if (!File.Exists(path))
                 {
-                    if (!File.Exists(path))
-                    {
-                        modelPaths.Remove(path);
-                    }
+                    modelPaths.Remove(path);
                 }
-                if (modelPaths.Count == 0)
-                {
-                    throw new InvalidOperationException("there arent any valid path in list");
-                }
-                if (modelPaths.Count == 1)
-                {
-                    InModelDetection = true;
-                }
-                ModelPaths = modelPaths;
-            }    
+            }
+            if (modelPaths.Count == 0)
+            {
+                throw new InvalidOperationException("there arent any valid path in list");
+            }
+            if (modelPaths.Count == 1)
+            {
+                InModelDetection = true;
+            }
+            ModelPaths = modelPaths;
         }
     }
 }

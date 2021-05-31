@@ -14,17 +14,7 @@ namespace GS.Gltf.Collision.SharpGltf
             //transformations.Reverse();
             foreach (var transformation in transformations)
             {
-
                 vec = Vector3.Transform(vec,transformation.Matrix);
-                //if (!transformation.IsIdentity)
-                //{
-                //    vec = Vector3.Multiply(vec, transformation.Scale);
-                //    vec = Vector3.Add(vec, transformation.Translation);
-                //    vec = Vector3.Transform(vec, transformation.Rotation);
-                //}
-                
-                
-                
             }
             return vec;
         }

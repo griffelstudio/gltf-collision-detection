@@ -6,18 +6,18 @@ namespace GS.Gltf.Collision.SharpGltf
 {
     public class CollisionDetector
     {
-        private CollisionSettings Settings { get; } 
+        private CollisionSettings Settings { get; }
 
         public CollisionDetector(CollisionSettings settings)
         {
             Settings = settings;
         }
 
-        public DetectionResult Detect()
+        public List<Collision> Detect()
         {
             var reader = new GltfReader(Settings.ModelPaths);
             var models = reader.Models;
-            if (Settings.InModelDetection )
+            if (Settings.InModelDetection)
             {
                 foreach (var model in models)
                 {
@@ -28,18 +28,14 @@ namespace GS.Gltf.Collision.SharpGltf
             var modelCollisionPairs = MakeModelsCollisionPairs(models);
             var checkedModelCollisionPairs = CheckModelsCollisionPairs(modelCollisionPairs);
 
-            List<ElementCollisionPair> checkedNodesCollisionPairs = null;
+            List<Collision> checkedNodesCollisionPairs = null;
             if (Settings.ModelPaths.Count > 1)
             {
                 checkedNodesCollisionPairs = MakeAndCheckElementCollisionPair(checkedModelCollisionPairs);
             }
 
 
-            return new DetectionResult()
-            {
-                ModelsCollisionPairs = checkedModelCollisionPairs,
-                ElementCollisionPairs = checkedNodesCollisionPairs,
-            };
+            return checkedNodesCollisionPairs;
         }
 
         private List<ElementNodesCollision> CheckCollisionsIntoModel(ModelData model)
@@ -60,7 +56,7 @@ namespace GS.Gltf.Collision.SharpGltf
                             IsElementCollide = CheckCollision(firstNode, secondNode),
                         });
                     }
-                       
+
                 }
             }
             return result;
@@ -72,7 +68,7 @@ namespace GS.Gltf.Collision.SharpGltf
             //combinations by 2 without combinations and mirror copies
             for (int i = 0; i < models.Count; i++)
             {
-                for (int j = i; j < models.Count; j++) 
+                for (int j = i; j < models.Count; j++)
                 {
                     if (i != j)
                     {
@@ -81,7 +77,7 @@ namespace GS.Gltf.Collision.SharpGltf
                             firstModel = models[i],
                             secondModel = models[j]
                         });
-                    }  
+                    }
                 }
             }
             return result;
@@ -99,9 +95,9 @@ namespace GS.Gltf.Collision.SharpGltf
             return pairs;
         }
 
-        private List<ElementCollisionPair> MakeAndCheckElementCollisionPair(List<ModelsCollisionPair> pairs)
+        private List<Collision> MakeAndCheckElementCollisionPair(List<ModelsCollisionPair> pairs)
         {
-            var result = new List<ElementCollisionPair>();
+            var result = new List<Collision>();
             foreach (var pair in pairs)
             {
                 if (pair.IsModelCollide)
@@ -110,16 +106,42 @@ namespace GS.Gltf.Collision.SharpGltf
                     {
                         foreach (var othElement in pair.secondModel.ElementMeshPrimitives)
                         {
-                            result.Add(new ElementCollisionPair()
-                            {
-                                firstModel = pair.firstModel,
-                                secondModel = pair.secondModel,
-                                IsModelCollide = pair.IsModelCollide,
-                                firstModelElement = element,
-                                secondModelElement = othElement,
-                                IsElementCollide = CheckCollision(element, othElement),
-                            });
+                            var indexPair = new KeyValuePair<string, string>(pair.firstModel.modelIndex.ToString(),
+                                element.NodeName);
+                            var indexPair2 = new KeyValuePair<string, string>(pair.secondModel.modelIndex.ToString(),
+                                othElement.NodeName);
+                            var collisionBoundingBox = element.GetBoundingBox().GetBigCollisionBoundingBox(othElement.GetBoundingBox());
+                            var triangleCollisions = CheckTriangleCollisions(element, othElement);
+                            var collision = new Collision(indexPair, indexPair2, collisionBoundingBox, triangleCollisions);
+                            result.Add(collision);
                         }
+                    }
+                }
+            }
+            return result;
+        }
+
+        private List<TriangleCollision> CheckTriangleCollisions(Element e1, Element e2)
+        {
+            var result = new List<TriangleCollision>();
+
+            for (int i = 0; i < e1.Triangles.Count; i++)
+            {
+                for (int j = 0; j < e2.Triangles.Count; j++)
+                {
+                    var triange1 = e1.Triangles[i];
+                    var triange2 = e2.Triangles[j];
+
+                    if (Triangle.TriangleTriangle(triange1, triange2))
+                    {
+                        result.Add(new TriangleCollision
+                        {
+                            //DEBUG
+                            //FirstModel = new KeyValuePair<string, string>(string.Format("{0}_{1}",e1.ModelIndex,e1.NodeName),i.ToString()),
+                            //SecondModel = new KeyValuePair<string, string>(string.Format("{0}_{1}", e2.ModelIndex, e2.NodeName), j.ToString())
+                            FirstModel = new KeyValuePair<string, string>(e1.NodeName, i.ToString()),
+                            SecondModel = new KeyValuePair<string, string>(e2.NodeName, j.ToString())
+                        });
                     }
                 }
             }
@@ -130,7 +152,6 @@ namespace GS.Gltf.Collision.SharpGltf
         {
             return firstObject.GetBoundingBox().IsCollideWith(secondObject.GetBoundingBox());
         }
-
 
     }
 
@@ -155,9 +176,26 @@ namespace GS.Gltf.Collision.SharpGltf
         public bool IsElementCollide;
     }
 
-    public class DetectionResult
+
+    public class Collision
     {
-        public List<ElementCollisionPair> ElementCollisionPairs;
-        public List<ModelsCollisionPair> ModelsCollisionPairs;
+        public KeyValuePair<string, string> Element1;
+        public KeyValuePair<string, string> Element2;
+        public BoundingBox Boundaries;
+        public List<TriangleCollision> Collisions;
+
+        public Collision(KeyValuePair<string, string> element1, KeyValuePair<string, string> element2, BoundingBox boundaries, List<TriangleCollision> collisions)
+        {
+            Element1 = element1;
+            Element2 = element2;
+            Boundaries = boundaries;
+            Collisions = collisions;
+        }
+    }
+
+    public class TriangleCollision
+    {
+        public KeyValuePair<string, string> FirstModel;
+        public KeyValuePair<string, string> SecondModel;
     }
 }

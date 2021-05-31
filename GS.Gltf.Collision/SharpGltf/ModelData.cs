@@ -12,7 +12,7 @@ namespace GS.Gltf.Collision
 {
     public class ModelData : ICollidable
     {
-        private int modelIndex;
+        public int modelIndex;
         private List<Node> nodes;
         private List<Node> nodesWithGeometry;
         public List<Element> ElementMeshPrimitives;
@@ -29,7 +29,7 @@ namespace GS.Gltf.Collision
             nodesWithGeometry = nodes.Where(n => n.Mesh is object).ToList();
             
             NodeTransforms = CollectNodesTransforms();
-            ElementMeshPrimitives = GetNodePrimitives(nodesWithGeometry);
+            ElementMeshPrimitives = GetNodePrimitives(nodesWithGeometry, modelIndex);
 
             ModelPrimitive = new ModelPrimitive(modelIndex, ElementMeshPrimitives);
             this.modelIndex = modelIndex;
@@ -59,7 +59,7 @@ namespace GS.Gltf.Collision
             return ModelPrimitive.BoundingBox;
         }
 
-        public List<Element> GetNodePrimitives(List<Node> nodes)
+        public List<Element> GetNodePrimitives(List<Node> nodes, int index)
         {
             var resultList = new List<Element>();
             foreach (var node in nodes)
@@ -70,7 +70,7 @@ namespace GS.Gltf.Collision
                     nodePrimitives.Add(primitive);
                 }
                 var nodeIndex = node.LogicalIndex;
-                resultList.Add(new Element(nodeIndex, nodePrimitives, node.Name,NodeTransforms[nodeIndex]));
+                resultList.Add(new Element(nodeIndex, index, nodePrimitives, node.Name,NodeTransforms[nodeIndex]));
             }
             return resultList;
         }
@@ -80,24 +80,29 @@ namespace GS.Gltf.Collision
     {
         public int NodeIndex;
         public string NodeName;
+        public int ModelIndex;
         public List<MeshPrimitive> Primitives;
         public List<Vector3> PositionVectors;
         public BoundingBox BoundingBox;
         public List<float> Xs = new List<float>();
         public List<float> Ys = new List<float>();
         public List<float> Zs = new List<float>();
+        public List<Triangle> Triangles = new List<Triangle>();
 
-        public Element(int nodeIndex, List<MeshPrimitive> primitives, string nodeName, List<AffineTransform> transforms)
+        public Element(int nodeIndex, int modelIndex, List<MeshPrimitive> primitives, string nodeName, List<AffineTransform> transforms)
         {
             Primitives = primitives;
             NodeIndex = nodeIndex;
             NodeName = nodeName;
+            ModelIndex = modelIndex;
 
             PositionVectors = new List<Vector3>();
             foreach (var primitive in Primitives)
             {
                 var positionAccessor = primitive.VertexAccessors["POSITION"];
                 var accessorVector = Transformation.TransformAccessor(positionAccessor, transforms);
+                var indices = primitive.IndexAccessor;
+                CreateTriangles(accessorVector, indices.AsScalarArray());
                 PositionVectors.AddRange(accessorVector);
             }
             CreateBoundingBox();
@@ -106,6 +111,14 @@ namespace GS.Gltf.Collision
         public BoundingBox GetBoundingBox()
         {
             return BoundingBox;
+        }
+
+        private void CreateTriangles(List<Vector3> points, IList<float> indeces)
+        {
+            for (int i = 2; i < indeces.Count; i=i+3)
+            {
+                Triangles.Add(new Triangle(points[(int)indeces[i]], points[(int)indeces[i - 1]], points[(int)indeces[i - 2]]));
+            }
         }
 
         private void CreateBoundingBox()

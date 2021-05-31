@@ -70,6 +70,12 @@ namespace GS.Gltf.Collision
             MinV.Z = min[Z_DIM];
         }
 
+        public BoundingBox(Vector3 max, Vector3 min)
+        {
+            MaxV = max;
+            MinV = min;
+        }
+
         public bool IsCollideWith(BoundingBox other)
         {
             float delta = CollisionConstants.Tolerance;
@@ -78,5 +84,50 @@ namespace GS.Gltf.Collision
             (Math.Max(this.MaxV.Y, other.MaxV.Y) - Math.Min(this.MinV.Y, other.MinV.Y) + delta < this.MaxV.Y - this.MinV.Y + other.MaxV.Y - other.MinV.Y) &&
             (Math.Max(this.MaxV.Z, other.MaxV.Z) - Math.Min(this.MinV.Z, other.MinV.Z) + delta < this.MaxV.Z - this.MinV.Z + other.MaxV.Z - other.MinV.Z);
         }
+
+        public BoundingBox GetCollisionBoundingBox(BoundingBox other)
+        {
+            if (this.MaxV == other.MaxV && this.MinV == other.MinV)
+            {
+                return new BoundingBox(MaxV, MinV); //equal BB
+            }
+            if ((this.MaxV.X > other.MaxV.X) && (this.MaxV.Y > other.MaxV.Y) && (this.MaxV.Z > other.MaxV.Z) &&
+               (this.MinV.X < other.MinV.X) && (this.MinV.Y < other.MinV.Y) && (this.MinV.Z < other.MinV.Z))
+            {
+                return new BoundingBox(this.MaxV, this.MinV); //this include other
+            }
+            if ((other.MaxV.X >= this.MaxV.X) && (other.MaxV.Y >= this.MaxV.Y) && (other.MaxV.Z >= this.MaxV.Z) &&
+               (other.MinV.X <= this.MinV.X) && (other.MinV.Y <= this.MinV.Y) && (other.MinV.Z <= this.MinV.Z))
+            {
+                return new BoundingBox(this.MaxV, this.MinV); //other include this
+            }
+            var firstDist = Vector3.Distance(this.MaxV, other.MinV);
+            var secondDist = Vector3.Distance(this.MinV, other.MaxV);
+
+            if (firstDist >= secondDist)
+            {
+                return new BoundingBox(other.MaxV,this.MinV);
+            }
+            else
+            {
+                return new BoundingBox(this.MaxV, other.MinV);
+            }
+
+        }
+
+
+        public BoundingBox GetBigCollisionBoundingBox(BoundingBox other)
+        {
+            if (this.MaxV == other.MaxV && this.MinV == other.MinV)
+            {
+                return new BoundingBox(MaxV, MinV); //equal BB
+            }
+
+            var MaxMax = Vector3.Max(this.MaxV, other.MaxV);
+            var MinMin = Vector3.Min(this.MinV, other.MinV);
+
+            return new BoundingBox(MaxMax, MinMin);
+        }
+        
     }
 }

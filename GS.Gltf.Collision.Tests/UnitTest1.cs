@@ -5,6 +5,7 @@ using GS.Gltf.Collision;
 using System.Collections.Generic;
 using GS.Gltf.Collision.SharpGltf;
 using System.IO;
+using System.Linq;
 
 namespace GS.Gltf.Collision.Tests
 {
@@ -16,9 +17,9 @@ namespace GS.Gltf.Collision.Tests
 
             List<string> inputfiles = new List<string>()
             {
-                Path.Combine("C:","gltf","collision","transofrms","test2021.gltf"),
-                Path.Combine("C:","gltf","collision","test3","test2021InsideCollision.gltf"),
-                Path.Combine("C:","gltf","collision","Incollision","test2021InsideCollision.gltf"),
+                Path.Combine("C:","gltf","collision","1","test2021InsideCollision.gltf"),
+                Path.Combine("C:","gltf","collision","2","test2021InsideCollision.gltf"),
+                Path.Combine("C:","gltf","collision","3","test2021InsideCollision.gltf"),
             };
 
             var settings = new CollisionSettings(inputfiles)
@@ -30,6 +31,7 @@ namespace GS.Gltf.Collision.Tests
 
             var detector = new CollisionDetector(settings);
             var detectResult = detector.Detect();
+            detectResult = detectResult.Where(x => x.Collisions.Count > 0).ToList();
             Assert.Pass();
         }
 

@@ -1,7 +1,4 @@
 ﻿using glTFLoader.Schema;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Numerics;
 using GS.Gltf.Collision.Geometry;
 
@@ -73,12 +70,5 @@ namespace GS.Gltf.Collision.Tests
         public static Ray ray4 = new Ray(new Vector3(10, 5, 10), new Vector3(10, 5, 0));
         public static Ray ray5 = new Ray(new Vector3(10, 5, 10), new Vector3(10, 5, 0));
         public static Ray ray6 = new Ray(new Vector3(0, 0, 10), new Vector3(10, 10, 0));
-
-
-
-
-
-
-
     }
 }

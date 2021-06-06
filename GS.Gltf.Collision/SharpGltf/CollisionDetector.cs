@@ -159,15 +159,10 @@ namespace GS.Gltf.Collision.SharpGltf
                             }
                         }
 
-
-
                         result.Add(new TriangleCollision
                         {
-                            //DEBUG
-                            //FirstModel = new KeyValuePair<string, string>(string.Format("{0}_{1}",e1.ModelIndex,e1.NodeName),i.ToString()),
-                            //SecondModel = new KeyValuePair<string, string>(string.Format("{0}_{1}", e2.ModelIndex, e2.NodeName), j.ToString())
-                            FirstModel = new KeyValuePair<string, string>(e1.NodeName, i.ToString()),
-                            SecondModel = new KeyValuePair<string, string>(e2.NodeName, j.ToString()),
+                            ElementTriangle1 = i.ToString(),
+                            ElementTriangle2 = j.ToString(),
                             IntersectionPoints = intersectionPoints,
                         });
                     }
@@ -208,12 +203,24 @@ namespace GS.Gltf.Collision.SharpGltf
     public class Collision
     {
         /// <summary>
-        /// blalblabl
+        /// key defines model intex and value defines node name
         /// </summary>
         public KeyValuePair<string, string> Element1;
+        /// <summary>
+        /// key defines model intex and value defines node name
+        /// </summary>
         public KeyValuePair<string, string> Element2;
+        /// <summary>
+        /// Max AABB
+        /// </summary>
         public BoundingBox Boundaries;
+        /// <summary>
+        /// BB based on points of intersection
+        /// </summary>
         public BoundingBox MinIntersectionBoundaries;
+        /// <summary>
+        /// collection of interseted triangles
+        /// </summary>
         public List<TriangleCollision> Collisions;
         
 
@@ -241,11 +248,10 @@ namespace GS.Gltf.Collision.SharpGltf
 
     public class TriangleCollision
     {
-        public KeyValuePair<string, string> FirstModel;
-        public KeyValuePair<string, string> SecondModel;
+
         public List<Vector3> IntersectionPoints;
-        //public string ElementTriangle1
-        //public string ElementTriangle2
+        public string ElementTriangle1;
+        public string ElementTriangle2;
 
     }
 }

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Numerics;
 
-namespace GS.Gltf.Collision.SharpGltf
+namespace GS.Gltf.Collision.Geometry
 {
     public class Interval
     {
@@ -22,7 +24,7 @@ namespace GS.Gltf.Collision.SharpGltf
             result.min = Math.Min(result.min, value);
             result.max = Math.Max(result.max, value);
 
-            
+
 
             return result;
         }
@@ -36,11 +38,21 @@ namespace GS.Gltf.Collision.SharpGltf
         public Vector3 B;
         public Vector3 C;
 
+        public Triangle()
+        {
+        }
+
         public Triangle(Vector3 a, Vector3 b, Vector3 c)
         {
-            A = a;
-            B = b;
-            C = c;
+            A = RoundVector(a);
+            B = RoundVector(b);
+            C = RoundVector(c);
+        }
+
+        public Vector3 RoundVector(Vector3 vec)
+        {
+            int round = 2;
+            return new Vector3((float)Math.Round(vec.X, round), (float)Math.Round(vec.Y, round), (float)Math.Round(vec.Z, round));
         }
 
         public static bool OverlapOnAxis(Triangle t1, Triangle t2, Vector3 axis)
@@ -49,6 +61,18 @@ namespace GS.Gltf.Collision.SharpGltf
             Interval b = Interval.GetInterval(t2, axis);
 
             return ((b.min <= a.max) && (a.min <= b.max));
+        }
+
+        public List<Ray> GetEdgesRays()
+        {
+            var result = new List<Ray>();
+            result.Add(new Ray(A, B));
+            result.Add(new Ray(B, C));
+            result.Add(new Ray(C, A));
+            result.Add(new Ray(B, A));
+            result.Add(new Ray(C, B));
+            result.Add(new Ray(A, C));
+            return result;
         }
 
         public static bool TriangleTriangle(Triangle t1, Triangle t2)
@@ -86,6 +110,28 @@ namespace GS.Gltf.Collision.SharpGltf
             return true;
         }
     }
+
+    public class Line3D
+    {
+        public Vector3 start;
+        public Vector3 end;
+    }
+
+    public class Plane
+    {
+        public Vector3 normal;
+        public float distanse;
+    }
+
+    public class Ray
+    {
+        public Vector3 origin;
+        public Vector3 direction;
+
+        public Ray(Vector3 from, Vector3 to)
+        {
+            origin = from;
+            direction = HelperUtils.Normalized(to - from);
+        }
+    }
 }
-
-

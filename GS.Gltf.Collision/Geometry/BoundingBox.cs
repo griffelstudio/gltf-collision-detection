@@ -48,6 +48,28 @@ namespace GS.Gltf.Collision
             MinV.Z = Min[Z_DIM];
         }
 
+        public BoundingBox(List<Vector3> points)
+        {
+            var Xs = new List<float>();
+            var Ys = new List<float>();
+            var Zs = new List<float>();
+
+            foreach (var point in points)
+            {
+                Xs.Add(point.X);
+                Ys.Add(point.Y);
+                Zs.Add(point.Z);
+            }
+
+            MaxV.X = Xs.Max();
+            MaxV.Y = Ys.Max();
+            MaxV.Z = Zs.Max();
+
+            MinV.X = Xs.Min();
+            MinV.Y = Ys.Min();
+            MinV.Z = Zs.Min();
+        }
+
         public BoundingBox(Accessor accessor)
         {
             MaxV.X = accessor.Max[X_DIM];

@@ -1,0 +1,146 @@
+﻿using GS.Gltf.Collision.SharpGltf;
+using System;
+using System.Collections.Generic;
+using System.Numerics;
+using System.Text;
+
+namespace GS.Gltf.Collision.Geometry
+{
+    public class HelperUtils
+    {
+        public static Vector3 ClosestPoint(Line3D line, Vector3 point)
+        {
+            Vector3 lVec = line.end - line.start;
+
+            float t = Vector3.Dot(point - line.start, lVec) / Vector3.Dot(lVec, lVec);
+            t = Math.Max(t, 0.0f);
+            t = Math.Min(t, 0.0f);
+            return line.start + lVec * t;
+
+        }
+
+        public static float MagnitudeSq(Vector3 v)
+        {
+            return Vector3.Dot(v, v);
+        }
+
+        public static bool PointOnLine(Vector3 point, Line3D line)
+        {
+            Vector3 closest = ClosestPoint(line, point);
+            float distanceSq = MagnitudeSq(closest - point);
+            return distanceSq == 0.0f;
+
+        }
+
+        public static float Raycast(Plane plane, Ray ray)
+        {
+            float nd = Vector3.Dot(ray.direction, plane.normal);
+            float pn = Vector3.Dot(ray.origin, plane.normal);
+
+            if (nd >= 0.0f)
+            {
+                return -1;
+            }
+
+            float t = (plane.distanse - pn) / nd;
+
+            if (t >= 0.0f)
+            {
+                return t;
+            }
+
+            return -1;
+        }
+
+        public static Vector3 Project(Vector3 lenth, Vector3 direction)
+        {
+            float dot = Vector3.Dot(lenth, direction);
+            float magSq = MagnitudeSq(direction);
+            return direction * (dot / magSq);
+        }
+
+        public static Vector3 Barycentric(Vector3 point, Triangle triangle)
+        {
+            Vector3 ap = point - triangle.A;
+            Vector3 bp = point - triangle.B;
+            Vector3 cp = point - triangle.C;
+
+            Vector3 ab = triangle.B - triangle.A;
+            Vector3 ac = triangle.C - triangle.A;
+            Vector3 bc = triangle.C - triangle.B;
+            Vector3 cb = triangle.B - triangle.C;
+            Vector3 ca = triangle.A - triangle.C;
+
+            Vector3 v = ab - Project(ab, cb);
+            float a = 1.0f - (Vector3.Dot(v, ap)) / Vector3.Dot(v, ab);
+            v = bc - Project(bc, ac);
+            float b = 1.0f - (Vector3.Dot(v, bp)) / Vector3.Dot(v, bc);
+            v = ca - Project(ca, ab);
+            float c = 1.0f - (Vector3.Dot(v, cp)) / Vector3.Dot(v, ca);
+
+            return new Vector3(a, b, c);
+
+        }
+
+        public static float Magnitude(Vector3 vec)
+        {
+            var d = Vector3.Dot(vec, vec);
+            var sq = Math.Sqrt(d);
+            return (float)sq; // is valid cast?
+        }
+
+        public static Vector3 Normalized(Vector3 vec)
+        {
+            var m = Magnitude(vec);
+            return vec * (1.0f / m);
+        }
+
+        public static Plane FromTriangle(Triangle triangle)
+        {
+            var plane = new Plane();
+            plane.normal = Normalized(Vector3.Cross(triangle.B - triangle.A, triangle.C - triangle.A));
+            plane.distanse = Vector3.Dot(plane.normal, triangle.A);
+            return plane;
+        }
+
+        public static float Raycast(Triangle triangle, Ray ray)
+        {
+            Plane plane = FromTriangle(triangle);
+            float t = Raycast(plane, ray);
+            if (t < 0.0f)
+            {
+                return t;
+            }
+            Vector3 result = ray.origin + ray.direction * t;
+
+            Vector3 barycentric = Barycentric(result, triangle);
+            if (barycentric.X >= 0.0f && barycentric.X <= 1.0f &&
+                barycentric.Y >= 0.0f && barycentric.Y <= 1.0f &&
+                barycentric.Z >= 0.0f && barycentric.Z <= 1.0f)
+            {
+                return t;
+            }
+            return -1;
+        }
+
+        public static Vector3 RaycastPoint(Triangle triangle, Ray ray)
+        {
+            Plane plane = FromTriangle(triangle);
+            float t = Raycast(plane, ray);
+            if (t < 0.0f)
+            {
+                return new Vector3();
+            }
+            Vector3 result = ray.origin + ray.direction * t;
+
+            Vector3 barycentric = Barycentric(result, triangle);
+            if (barycentric.X >= 0.0f && barycentric.X <= 1.0f &&
+                barycentric.Y >= 0.0f && barycentric.Y <= 1.0f &&
+                barycentric.Z >= 0.0f && barycentric.Z <= 1.0f)
+            {
+                return result;
+            }
+            return new Vector3();
+        }
+    }
+}

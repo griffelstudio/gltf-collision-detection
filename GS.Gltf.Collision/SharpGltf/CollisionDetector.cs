@@ -1,5 +1,7 @@
-﻿using System;
+﻿using GS.Gltf.Collision.Geometry;
+using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Text;
 
 namespace GS.Gltf.Collision.SharpGltf
@@ -132,15 +134,41 @@ namespace GS.Gltf.Collision.SharpGltf
                     var triange1 = e1.Triangles[i];
                     var triange2 = e2.Triangles[j];
 
-                    if (Triangle.TriangleTriangle(triange1, triange2))
+                    var check = Triangle.TriangleTriangle(triange1, triange2);
+
+                    if (check)
                     {
+                        var intersectionPoints = new List<Vector3>();
+                        foreach (var ray in triange1.GetEdgesRays())
+                        {
+                            var point = HelperUtils.RaycastPoint(triange2, ray);
+                            if (point != new Vector3())
+                            {
+                                intersectionPoints.Add(point);
+                            }
+                            
+                            
+                        }
+
+                        foreach (var ray in triange2.GetEdgesRays())
+                        {
+                            var point = HelperUtils.RaycastPoint(triange1, ray);
+                            if (point != new Vector3())
+                            {
+                                intersectionPoints.Add(point);
+                            }
+                        }
+
+
+
                         result.Add(new TriangleCollision
                         {
                             //DEBUG
                             //FirstModel = new KeyValuePair<string, string>(string.Format("{0}_{1}",e1.ModelIndex,e1.NodeName),i.ToString()),
                             //SecondModel = new KeyValuePair<string, string>(string.Format("{0}_{1}", e2.ModelIndex, e2.NodeName), j.ToString())
                             FirstModel = new KeyValuePair<string, string>(e1.NodeName, i.ToString()),
-                            SecondModel = new KeyValuePair<string, string>(e2.NodeName, j.ToString())
+                            SecondModel = new KeyValuePair<string, string>(e2.NodeName, j.ToString()),
+                            IntersectionPoints = intersectionPoints,
                         });
                     }
                 }
@@ -179,10 +207,15 @@ namespace GS.Gltf.Collision.SharpGltf
 
     public class Collision
     {
+        /// <summary>
+        /// blalblabl
+        /// </summary>
         public KeyValuePair<string, string> Element1;
         public KeyValuePair<string, string> Element2;
         public BoundingBox Boundaries;
+        public BoundingBox MinIntersectionBoundaries;
         public List<TriangleCollision> Collisions;
+        
 
         public Collision(KeyValuePair<string, string> element1, KeyValuePair<string, string> element2, BoundingBox boundaries, List<TriangleCollision> collisions)
         {
@@ -190,6 +223,19 @@ namespace GS.Gltf.Collision.SharpGltf
             Element2 = element2;
             Boundaries = boundaries;
             Collisions = collisions;
+
+            var collisionPoints = new List<Vector3>();
+
+            foreach (var collision in Collisions)
+            {
+                collisionPoints.AddRange(collision.IntersectionPoints);
+            }
+            if (collisionPoints.Count > 0)
+            {
+                MinIntersectionBoundaries = new BoundingBox(collisionPoints);
+            }
+            
+
         }
     }
 
@@ -197,5 +243,9 @@ namespace GS.Gltf.Collision.SharpGltf
     {
         public KeyValuePair<string, string> FirstModel;
         public KeyValuePair<string, string> SecondModel;
+        public List<Vector3> IntersectionPoints;
+        //public string ElementTriangle1
+        //public string ElementTriangle2
+
     }
 }

@@ -7,6 +7,7 @@ using System.Linq;
 using SharpGLTF.Transforms;
 using System.Numerics;
 using GS.Gltf.Collision.SharpGltf;
+using GS.Gltf.Collision.Geometry;
 
 namespace GS.Gltf.Collision
 {

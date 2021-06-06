@@ -59,6 +59,14 @@ namespace GS.Gltf.Collision.Tests
             var res4 = Triangle.TriangleTriangle(TestObjects.triangle1, TestObjects.triangle4);
             var res5 = Triangle.TriangleTriangle(TestObjects.triangle2, TestObjects.triangle4);
             var res6 = Triangle.TriangleTriangle(TestObjects.triangle3, TestObjects.triangle4);
+
+            Assert.IsTrue(res1);
+            Assert.IsTrue(res2);
+            Assert.IsTrue(res3);
+            Assert.IsFalse(res4);
+            Assert.IsFalse(res5);
+            Assert.IsFalse(res6);
+
         }
     }
 }

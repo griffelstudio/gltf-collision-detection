@@ -11,7 +11,6 @@ namespace GS.Gltf.Collision.SharpGltf
     {
         public static Vector3 TransformVector(Vector3 vec, List<AffineTransform> transformations)
         {
-            //transformations.Reverse();
             foreach (var transformation in transformations)
             {
                 vec = Vector3.Transform(vec,transformation.Matrix);

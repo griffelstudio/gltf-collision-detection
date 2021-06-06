@@ -19,8 +19,7 @@ namespace GS.Gltf.Collision
         public List<Element> ElementMeshPrimitives;
         public Dictionary<int, List<AffineTransform>> NodeTransforms;
         public ModelPrimitive ModelPrimitive;
-        public List<ElementNodesCollision> NodesCollision;
-
+        public List<CollisionElement> InterModelCollisions;
 
         public ModelData(ModelRoot model, int modelIndex)
         {
@@ -134,7 +133,6 @@ namespace GS.Gltf.Collision
 
             foreach (var vector in PositionVectors)
             {
-
                 minX = Math.Min(vector.X, minX);
                 minY = Math.Min(vector.Y, minY);
                 minZ = Math.Min(vector.Z, minZ);
@@ -175,7 +173,6 @@ namespace GS.Gltf.Collision
         {
             ModelIndex = modelIndex;
             Primitives = primitives;
-
             CreateBoundingBox();
         }
 
@@ -205,10 +202,7 @@ namespace GS.Gltf.Collision
             {
                 Xs.Last(), Ys.Last(), Zs.Last()
             };
-
             BoundingBox = new BoundingBox(max, min);
         }
     }
-
-            
 }

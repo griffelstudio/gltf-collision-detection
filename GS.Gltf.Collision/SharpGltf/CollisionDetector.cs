@@ -1,6 +1,7 @@
 ﻿using GS.Gltf.Collision.Geometry;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using System.Text;
 
@@ -9,6 +10,7 @@ namespace GS.Gltf.Collision.SharpGltf
     public class CollisionDetector
     {
         private CollisionSettings Settings { get; }
+        public List<ModelData> Models;
 
         public CollisionDetector(CollisionSettings settings)
         {
@@ -18,16 +20,17 @@ namespace GS.Gltf.Collision.SharpGltf
         public List<CollisionElement> Detect()
         {
             var reader = new GltfReader(Settings.ModelPaths);
-            var models = reader.Models;
+            Models = reader.Models;
             if (Settings.InModelDetection)
             {
-                foreach (var model in models)
+                foreach (var model in Models)
                 {
                     model.InterModelCollisions = CheckCollisionsIntoModel(model);
                 }
+                
             }
 
-            var modelCollisionPairs = MakeModelsCollisionPairs(models);
+            var modelCollisionPairs = MakeModelsCollisionPairs(Models);
             var checkedModelCollisionPairs = CheckModelsCollisionPairs(modelCollisionPairs);
 
             List<CollisionElement> checkedNodesCollisionPairs = null;
@@ -70,6 +73,7 @@ namespace GS.Gltf.Collision.SharpGltf
 
                 }
             }
+            result = result.Where(n => n.MinIntersectionBoundaries != null).ToList();
             return result;
         }
 

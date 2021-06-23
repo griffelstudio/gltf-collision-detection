@@ -1,9 +1,9 @@
-﻿using System;
+﻿using GS.Gltf.Collision.SharpGltf;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
-namespace GS.Gltf.Collision.SharpGltf
+namespace GS.Gltf.Collision
 {
     public class CollisionSettings
     {

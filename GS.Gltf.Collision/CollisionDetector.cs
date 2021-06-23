@@ -208,18 +208,22 @@ namespace GS.Gltf.Collision.SharpGltf
         /// key defines model intex and value defines node name
         /// </summary>
         public KeyValuePair<string, string> Element1;
+
         /// <summary>
         /// key defines model intex and value defines node name
         /// </summary>
         public KeyValuePair<string, string> Element2;
+
         /// <summary>
         /// Max AABB
         /// </summary>
         public BoundingBox Boundaries;
+
         /// <summary>
         /// BB based on points of intersection
         /// </summary>
         public BoundingBox MinIntersectionBoundaries;
+
         /// <summary>
         /// collection of interseted triangles
         /// </summary>
@@ -247,10 +251,8 @@ namespace GS.Gltf.Collision.SharpGltf
 
     public class TriangleCollision
     {
-
         public List<Vector3> IntersectionPoints;
         public string ElementTriangle1;
         public string ElementTriangle2;
-
     }
 }

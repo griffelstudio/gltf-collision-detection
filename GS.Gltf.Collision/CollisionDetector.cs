@@ -6,37 +6,71 @@ using GS.Gltf.Collision.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Threading;
 
 namespace GS.Gltf.Collision
 {
     public class CollisionDetector
     {
-        private CollisionSettings Settings { get; }
-        private List<ModelData> Models;
+        private CollisionSettings settings { get; }
+        private List<ModelData> models;
 
         public CollisionDetector(CollisionSettings settings)
         {
-            Settings = settings;
+            this.settings = settings;
         }
+
+
+        public CollisionResult Detect1()
+        {
+            //var models = settings.ModelPaths...
+
+            // Формируем пары для пересечений.
+            // Если только одна модель - то создается копия модели и формируется одна пара с идентичными моделями.
+
+            // После того как метод Detect1(ниже) нашел коллизии
+            // в зависимости от настроек мы мержим файлы, дорисовываем кубики и т.д.
+
+            // кык красиво дорисовывать кубики:
+            // создадим отдельный хелпер, который ест CollisionIntermediateResult и создаёт необходимые файлы.
+
+            // Вызывать проверку Detect1 асинхронно.
+
+            return null;
+        }
+
+        private CollisionIntermediateResult Detect1(ModelData one, ModelData another)
+        {
+            // Где-то внутри будет ещё один асинхронный вызов проверки коллизий треугольников.
+
+            return null;
+        }
+
+
+
+
+
+
+
 
         public List<CollisionElement> Detect()
         {
-            var reader = new GltfReader(Settings.ModelPaths);
-            Models = reader.Models;
-            if (Settings.InModelDetection)
+            var reader = new GltfReader(settings.ModelPaths);
+            models = reader.Models;
+            if (settings.InModelDetection)
             {
-                foreach (var model in Models)
+                foreach (var model in models)
                 {
                     model.InterModelCollisions = CheckCollisionsIntoModel(model);
                 }
                 
             }
 
-            var modelCollisionPairs = MakeModelsCollisionPairs(Models);
+            var modelCollisionPairs = MakeModelsCollisionPairs(models);
             var checkedModelCollisionPairs = CheckModelsCollisionPairs(modelCollisionPairs);
 
             List<CollisionElement> checkedNodesCollisionPairs = null;
-            if (Settings.ModelPaths.Count > 1)
+            if (settings.ModelPaths.Count > 1)
             {
                 checkedNodesCollisionPairs = MakeAndCheckElementCollisionPair(checkedModelCollisionPairs);
             }
@@ -45,6 +79,7 @@ namespace GS.Gltf.Collision
             return checkedNodesCollisionPairs;
         }
 
+        // Fufufu
         private List<CollisionElement> CheckCollisionsIntoModel(ModelData model)
         {
             
@@ -79,6 +114,7 @@ namespace GS.Gltf.Collision
             return result;
         }
 
+        // Tuple<ModelData, ModelData> 
         private List<ModelsCollisionPair> MakeModelsCollisionPairs(List<ModelData> models)
         {
             var result = new List<ModelsCollisionPair>();
@@ -209,7 +245,7 @@ namespace GS.Gltf.Collision
         public bool IsElementCollide;
     }
 
-    // TODO Move to the separate file.
+    // TODO Move to the separate file and rename to CollisionResult.
     public class CollisionElement
     {
         /// <summary>
@@ -232,6 +268,7 @@ namespace GS.Gltf.Collision
         /// </summary>
         public BoundingBox MinIntersectionBoundaries;
 
+        // TODO Это должно формироваться в отдельном месте изнутри CollisionDetector при необходимости.
         /// <summary>
         /// collection of interseted triangles
         /// </summary>
@@ -256,7 +293,7 @@ namespace GS.Gltf.Collision
         }
     }
 
-    // TODO Move to the separate file.
+    // TODO Move to the separate file, make internal.
     public class TriangleCollision
     {
         public List<Vector3> IntersectionPoints;

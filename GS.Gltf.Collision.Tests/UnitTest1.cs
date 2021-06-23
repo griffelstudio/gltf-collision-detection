@@ -22,7 +22,7 @@ namespace GS.Gltf.Collision.Tests
                 //Path.Combine("C:","gltf","collision","tests","box2","box2.gltf"),
                 //Path.Combine("C:","gltf","collision","tests","box3","box3.gltf"),
                 //Path.Combine("C:","gltf","collision","tests","box4","box4.gltf"),
-                Path.Combine("C:","gltf","collision","tests","all_boxes","all_boxes.gltf"),
+                Path.Combine("C:","Resources","all_boxes","all_boxes.gltf"),
             };
 
             var settings = new CollisionSettings(inputfiles)
@@ -35,6 +35,45 @@ namespace GS.Gltf.Collision.Tests
             var detector = new CollisionDetector(settings);
             var detectResult = detector.Detect();
             detectResult = detectResult.Where(x => x.Collisions.Count > 0).ToList();
+
+
+            Assert.Pass();
+        }
+
+        [Test]
+        public void InterModelCollisonTest()
+        {
+
+            List<string> inputfiles = new List<string>()
+            {
+                //Path.Combine("C:","gltf","collision","tests","box1","box1.gltf"),
+                //Path.Combine("C:","gltf","collision","tests","box2","box2.gltf"),
+                //Path.Combine("C:","gltf","collision","tests","box3","box3.gltf"),
+                //Path.Combine("C:","gltf","collision","tests","box4","box4.gltf"),
+                Path.Combine("C:","Resources","multicoliision_boxes","all_boxes.gltf"),
+            };
+
+            var settings = new CollisionSettings(inputfiles)
+            {
+                InterModelDetection = true,
+                InModelDetection = true,
+                Delta = 0.1f,
+            };
+
+            var detector = new CollisionDetector(settings);
+            detector.Detect();
+
+            var root = new GltfReader(inputfiles).RawModels[0];
+            var testModel = detector.Models[0];
+            foreach (var collision in testModel.InterModelCollisions)
+            {
+                root.AddCollisionBBNode(collision.MinIntersectionBoundaries);
+            }
+            
+            root.SaveGLTF(Path.Combine("C:", "Resources", "all_boxes", "collision.gltf"));
+            root.SaveGLB(Path.Combine("C:", "Resources", "all_boxes", "test.glb"));
+
+
             Assert.Pass();
         }
 

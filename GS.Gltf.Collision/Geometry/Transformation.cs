@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Numerics;
+﻿using SharpGLTF.Schema2;
 using SharpGLTF.Transforms;
-using SharpGLTF.Schema2;
+using System.Collections.Generic;
+using System.Numerics;
 
-namespace GS.Gltf.Collision.SharpGltf
+namespace GS.Gltf.Collision.Geometry
 {
-    class Transformation
+    internal class Transformation
     {
         public static Vector3 TransformVector(Vector3 vec, List<AffineTransform> transformations)
         {

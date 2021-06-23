@@ -35,6 +35,9 @@ namespace GS.Gltf.Collision.Tests
             Max = new float[] { 2f, 4f, 2f },
         });
 
+        // TODO Find a way to test/create internal classes
+        // and make geometry primitives internal.
+        //https://anthonygiretti.com/2018/06/27/how-to-unit-test-internal-classes-in-net-core-applications/
         public static Triangle triangle1 = new Triangle()
         {
             A = new Vector3(0, 0, 10),

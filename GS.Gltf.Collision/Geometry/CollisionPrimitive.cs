@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Numerics;
-using System.Text;
-using SharpGLTF.Geometry;
-using SharpGLTF.Geometry.VertexTypes;
+﻿using SharpGLTF.Geometry;
 using SharpGLTF.Materials;
-using SharpGLTF.Schema2;
-using SharpGLTF;
+using System.Numerics;
+using VERTEX = SharpGLTF.Geometry.VertexTypes.VertexPosition;
 
 namespace GS.Gltf.Collision.Geometry
 {
-    using VERTEX = SharpGLTF.Geometry.VertexTypes.VertexPosition;
-
-    public class CollisionPrimitive
+    /// <summary>
+    /// Red cube which is placed around collisions to highlight them.
+    /// </summary>
+    internal sealed class CollisionPrimitive
     {
 
         public MeshBuilder<VERTEX> MeshBuilder;

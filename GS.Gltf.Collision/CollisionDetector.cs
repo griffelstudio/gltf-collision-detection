@@ -1,16 +1,18 @@
 ﻿using GS.Gltf.Collision.Geometry;
-using System;
+using GS.Gltf.Collision.Helper;
+using GS.Gltf.Collision.Helpers;
+using GS.Gltf.Collision.Interfaces;
+using GS.Gltf.Collision.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Text;
 
-namespace GS.Gltf.Collision.SharpGltf
+namespace GS.Gltf.Collision
 {
     public class CollisionDetector
     {
         private CollisionSettings Settings { get; }
-        public List<ModelData> Models;
+        private List<ModelData> Models;
 
         public CollisionDetector(CollisionSettings settings)
         {
@@ -154,7 +156,7 @@ namespace GS.Gltf.Collision.SharpGltf
                         var intersectionPoints = new List<Vector3>();
                         foreach (var ray in triange1.GetEdgesRays())
                         {
-                            var point = HelperUtils.RaycastPoint(triange2, ray);
+                            var point = GeometryHelper.RaycastPoint(triange2, ray);
                             if (point != new Vector3())
                             {
                                 intersectionPoints.Add(point);
@@ -165,7 +167,7 @@ namespace GS.Gltf.Collision.SharpGltf
 
                         foreach (var ray in triange2.GetEdgesRays())
                         {
-                            var point = HelperUtils.RaycastPoint(triange1, ray);
+                            var point = GeometryHelper.RaycastPoint(triange1, ray);
                             if (point != new Vector3())
                             {
                                 intersectionPoints.Add(point);
@@ -191,21 +193,23 @@ namespace GS.Gltf.Collision.SharpGltf
 
     }
 
-    public class ModelsCollisionPair
+    // TODO Should we remove this?
+    internal class ModelsCollisionPair
     {
         public ModelData firstModel;
         public ModelData secondModel;
         public bool IsModelCollide { get; set; } = false;
     }
 
-    public class ElementNodesCollision
+    // TODO Should we remove this?
+    internal class ElementNodesCollision
     {
         public Element firstElement;
         public Element secondElement;
         public bool IsElementCollide;
     }
 
-
+    // TODO Move to the separate file.
     public class CollisionElement
     {
         /// <summary>
@@ -232,7 +236,6 @@ namespace GS.Gltf.Collision.SharpGltf
         /// collection of interseted triangles
         /// </summary>
         public List<TriangleCollision> Collisions;
-        
 
         public CollisionElement(KeyValuePair<string, string> element1, KeyValuePair<string, string> element2, BoundingBox boundaries, List<TriangleCollision> collisions)
         {
@@ -253,6 +256,7 @@ namespace GS.Gltf.Collision.SharpGltf
         }
     }
 
+    // TODO Move to the separate file.
     public class TriangleCollision
     {
         public List<Vector3> IntersectionPoints;

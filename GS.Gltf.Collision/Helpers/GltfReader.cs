@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using SharpGLTF;
+﻿using GS.Gltf.Collision.Models;
 using SharpGLTF.Schema2;
+using System.Collections.Generic;
 
-namespace GS.Gltf.Collision
+namespace GS.Gltf.Collision.Helpers
 {
-    public class GltfReader
+    internal class GltfReader
     {
         public List<ModelData> Models { get; set; }
-        public List<ModelRoot> RawModels { get; }
 
+        public List<ModelRoot> RawModels { get; }
 
         public GltfReader(List<string> filePaths)
         {
@@ -31,6 +29,5 @@ namespace GS.Gltf.Collision
         {
             return ModelRoot.Load(path);
         }
-
     }
 }

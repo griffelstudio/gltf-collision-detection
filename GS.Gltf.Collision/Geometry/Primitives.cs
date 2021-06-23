@@ -1,6 +1,6 @@
-﻿using System;
+﻿using GS.Gltf.Collision.Helper;
+using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Numerics;
 
 namespace GS.Gltf.Collision.Geometry
@@ -131,7 +131,7 @@ namespace GS.Gltf.Collision.Geometry
         public Ray(Vector3 from, Vector3 to)
         {
             origin = from;
-            direction = HelperUtils.Normalized(to - from);
+            direction = GeometryHelper.Normalized(to - from);
         }
     }
 }

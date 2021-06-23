@@ -1,14 +1,12 @@
-﻿using System;
+﻿using glTFLoader.Schema;
+using System;
 using System.Collections.Generic;
-using System.Text;
-using glTFLoader.Schema;
-using glTFLoader;
 using System.Linq;
 using System.Numerics;
-using GS.Gltf.Collision.SharpGltf;
 
 namespace GS.Gltf.Collision
 {
+    // TODO Make internal.
     public class BoundingBox
     {
         private const int VECTOR_3D_DIMENSION = 3;
@@ -137,7 +135,6 @@ namespace GS.Gltf.Collision
 
         }
 
-
         public BoundingBox GetBigCollisionBoundingBox(BoundingBox other)
         {
             if (this.MaxV == other.MaxV && this.MinV == other.MinV)
@@ -150,6 +147,5 @@ namespace GS.Gltf.Collision
 
             return new BoundingBox(MaxMax, MinMin);
         }
-        
     }
 }

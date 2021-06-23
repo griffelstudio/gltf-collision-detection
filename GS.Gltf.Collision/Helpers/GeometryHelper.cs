@@ -1,12 +1,10 @@
-﻿using GS.Gltf.Collision.SharpGltf;
+﻿using GS.Gltf.Collision.Geometry;
 using System;
-using System.Collections.Generic;
 using System.Numerics;
-using System.Text;
 
-namespace GS.Gltf.Collision.Geometry
+namespace GS.Gltf.Collision.Helper
 {
-    public class HelperUtils
+    internal static class GeometryHelper
     {
         public static Vector3 ClosestPoint(Line3D line, Vector3 point)
         {
@@ -32,7 +30,7 @@ namespace GS.Gltf.Collision.Geometry
 
         }
 
-        public static float Raycast(Plane plane, Ray ray)
+        public static float Raycast(Geometry.Plane plane, Ray ray)
         {
             float nd = Vector3.Dot(ray.direction, plane.normal);
             float pn = Vector3.Dot(ray.origin, plane.normal);
@@ -95,9 +93,9 @@ namespace GS.Gltf.Collision.Geometry
             return vec * (1.0f / m);
         }
 
-        public static Plane FromTriangle(Triangle triangle)
+        public static Geometry.Plane FromTriangle(Triangle triangle)
         {
-            var plane = new Plane();
+            var plane = new Geometry.Plane();
             plane.normal = Normalized(Vector3.Cross(triangle.B - triangle.A, triangle.C - triangle.A));
             plane.distanse = Vector3.Dot(plane.normal, triangle.A);
             return plane;
@@ -105,7 +103,7 @@ namespace GS.Gltf.Collision.Geometry
 
         public static float Raycast(Triangle triangle, Ray ray)
         {
-            Plane plane = FromTriangle(triangle);
+            Geometry.Plane plane = FromTriangle(triangle);
             float t = Raycast(plane, ray);
             if (t < 0.0f)
             {
@@ -125,7 +123,7 @@ namespace GS.Gltf.Collision.Geometry
 
         public static Vector3 RaycastPoint(Triangle triangle, Ray ray)
         {
-            Plane plane = FromTriangle(triangle);
+            Geometry.Plane plane = FromTriangle(triangle);
             float t = Raycast(plane, ray);
             if (t < 0.0f)
             {

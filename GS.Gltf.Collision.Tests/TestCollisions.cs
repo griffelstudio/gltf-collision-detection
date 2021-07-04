@@ -7,6 +7,9 @@ namespace GS.Gltf.Collision.Tests
 {
     public class TestCollisions
     {
+
+        string testRootPath = Directory.GetParent(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName).ToString();
+
         [Test]
         public void InterModelCollisionsTest()
         {
@@ -14,13 +17,15 @@ namespace GS.Gltf.Collision.Tests
             // Set pathes to the file as relative:
             //typeof(TestMain).Assembly.Location
 
+
+
             List<string> inputfiles = new List<string>()
             {
                 //Path.Combine("C:","gltf","collision","tests","box1","box1.gltf"),
                 //Path.Combine("C:","gltf","collision","tests","box2","box2.gltf"),
                 //Path.Combine("C:","gltf","collision","tests","box3","box3.gltf"),
-                Path.Combine("C:","gltf","collision","tests","box4","box4.gltf"),
-                Path.Combine("C:","Resources","all_boxes","all_boxes.gltf"),
+                Path.Combine(testRootPath,"Resources","box1","box1.gltf"),
+                Path.Combine(testRootPath,"Resources","box2","box2.gltf"),
             };
 
             var settings = new CollisionSettings(inputfiles)
@@ -47,7 +52,7 @@ namespace GS.Gltf.Collision.Tests
                 //Path.Combine("C:","gltf","collision","tests","box2","box2.gltf"),
                 //Path.Combine("C:","gltf","collision","tests","box3","box3.gltf"),
                 //Path.Combine("C:","gltf","collision","tests","box4","box4.gltf"),
-                Path.Combine("C:","Resources","multicoliision_boxes","all_boxes.gltf"),
+                Path.Combine(testRootPath,"Resources","multicoliision_boxes","all_boxes.gltf"),
             };
 
             var settings = new CollisionSettings(inputfiles)

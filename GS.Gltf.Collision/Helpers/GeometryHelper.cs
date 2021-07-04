@@ -1,7 +1,9 @@
 ﻿using GS.Gltf.Collision.Geometry;
 using System;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("GS.Gltf.Collision.Tests")]
 namespace GS.Gltf.Collision.Helper
 {
     internal static class GeometryHelper

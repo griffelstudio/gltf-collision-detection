@@ -20,7 +20,7 @@ namespace GS.Gltf.Collision.Tests
         [Test]
         public void TestTriangleCollisionPoints()
         {
-            var point = GeometryHelper.RaycastPoint(TestObjects.triangle1, TestObjects.ray1);
+            var point = Helper.GeometryHelper.RaycastPoint(TestObjects.triangle1, TestObjects.ray1);
             Assert.IsTrue(point == new System.Numerics.Vector3(10, 5, 5));
 
             var res1 = Triangle.TriangleTriangle(TestObjects.triangle2, TestObjects.triangle3);

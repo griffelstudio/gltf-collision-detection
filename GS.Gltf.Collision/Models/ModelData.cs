@@ -17,7 +17,7 @@ namespace GS.Gltf.Collision.Models
         public List<Element> ElementMeshPrimitives;
         public Dictionary<int, List<AffineTransform>> NodeTransforms;
         public ModelPrimitive ModelPrimitive;
-        public List<CollisionElement> InterModelCollisions;
+        public List<CollisionIntermediateResult> InterModelCollisions;
 
         public ModelData(ModelRoot model, int modelIndex)
         {

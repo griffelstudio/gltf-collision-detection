@@ -3,10 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("GS.Gltf.Collision.Tests")]
 namespace GS.Gltf.Collision
 {
-    // TODO Make internal.
+    //TODO internal
     public class BoundingBox
     {
         private const int VECTOR_3D_DIMENSION = 3;

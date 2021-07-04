@@ -56,7 +56,7 @@ namespace GS.Gltf.Collision
         }
     }
 
-    internal class CollisionResult
+    public class CollisionResult
     {
         public string Path { get; }
     }

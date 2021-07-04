@@ -51,26 +51,11 @@ namespace GS.Gltf.Collision
         {
             var reader = new GltfReader(settings.ModelPaths);
             models = reader.Models;
-            //if (settings.InModelDetection)
-            //{
-            //    foreach (var model in models)
-            //    {
-            //        model.InterModelCollisions = CheckCollisionsIntoModel(model);
-            //    }
-                
-            //}
-
             var modelCollisionPairs = MakeModelsCollisionPairs(models);
             var checkedModelCollisionPairs = CheckModelsCollisionPairs(modelCollisionPairs);
-
-            List<CollisionIntermediateResult> checkedNodesCollisionPairs = null;
-            if (settings.ModelPaths.Count > 1)
-            {
-                checkedNodesCollisionPairs = CheckElementCollisionPair(checkedModelCollisionPairs);
-            }
-
-
-            return checkedNodesCollisionPairs;
+            var result = CheckElementCollisionPair(checkedModelCollisionPairs);
+            
+            return result;
         }
 
         private List<Tuple<ModelData, ModelData>> MakeModelsCollisionPairs(List<ModelData> models)
@@ -184,14 +169,6 @@ namespace GS.Gltf.Collision
 
     }
 
-    // TODO Move to the separate file and rename to CollisionResult.
-    
 
-    // TODO Move to the separate file, make internal.
-    public class TriangleCollision
-    {
-        public List<Vector3> IntersectionPoints;
-        public string ElementTriangle1;
-        public string ElementTriangle2;
-    }
+
 }

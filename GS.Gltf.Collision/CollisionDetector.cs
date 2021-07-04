@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace GS.Gltf.Collision
 {
@@ -92,25 +93,53 @@ namespace GS.Gltf.Collision
         private List<CollisionIntermediateResult> CheckElementCollisionPair(List<Tuple<ModelData,ModelData>> pairs)
         {
             var result = new List<CollisionIntermediateResult>();
-            foreach (var pair in pairs)
+            //Parallel.ForEach(numbers, number =>
+            //{
+            //    if (IsPrime(number))
+            //    {
+            //        primeNumbers.Add(number);
+            //    }
+            //});
+            //foreach (var pair in pairs)
+            //{
+
+            //    foreach (var element in pair.Item1.ElementMeshPrimitives)
+            //    {
+            //        foreach (var othElement in pair.Item2.ElementMeshPrimitives)
+            //        {
+            //            var indexPair = new KeyValuePair<string, string>(pair.Item1.modelIndex.ToString(),
+            //                element.NodeName);
+            //            var indexPair2 = new KeyValuePair<string, string>(pair.Item2.modelIndex.ToString(),
+            //                othElement.NodeName);
+            //            var collisionBoundingBox = element.GetBoundingBox().GetBigCollisionBoundingBox(othElement.GetBoundingBox());
+            //            var triangleCollisions = CheckTriangleCollisions(element, othElement);
+            //            var collision = new CollisionIntermediateResult(indexPair, indexPair2, collisionBoundingBox, triangleCollisions);
+            //            result.Add(collision);
+            //        }
+            //    }
+
+            //}
+            Parallel.ForEach(pairs, pair =>
             {
-                
                 foreach (var element in pair.Item1.ElementMeshPrimitives)
                 {
                     foreach (var othElement in pair.Item2.ElementMeshPrimitives)
                     {
-                        var indexPair = new KeyValuePair<string, string>(pair.Item1.modelIndex.ToString(),
+                        if (element.NodeName != othElement.NodeName || !settings.InModelDetection) // filter element self collisions
+                        {
+                            var indexPair = new KeyValuePair<string, string>(pair.Item1.modelIndex.ToString(),
                             element.NodeName);
-                        var indexPair2 = new KeyValuePair<string, string>(pair.Item2.modelIndex.ToString(),
-                            othElement.NodeName);
-                        var collisionBoundingBox = element.GetBoundingBox().GetBigCollisionBoundingBox(othElement.GetBoundingBox());
-                        var triangleCollisions = CheckTriangleCollisions(element, othElement);
-                        var collision = new CollisionIntermediateResult(indexPair, indexPair2, collisionBoundingBox, triangleCollisions);
-                        result.Add(collision);
+                            var indexPair2 = new KeyValuePair<string, string>(pair.Item2.modelIndex.ToString(),
+                                othElement.NodeName);
+                            var collisionBoundingBox = element.GetBoundingBox().GetBigCollisionBoundingBox(othElement.GetBoundingBox());
+                            var triangleCollisions = CheckTriangleCollisions(element, othElement);
+                            var collision = new CollisionIntermediateResult(indexPair, indexPair2, collisionBoundingBox, triangleCollisions);
+                            result.Add(collision);
+                        }
+                        
                     }
                 }
-                
-            }
+            });
             return result;
         }
 

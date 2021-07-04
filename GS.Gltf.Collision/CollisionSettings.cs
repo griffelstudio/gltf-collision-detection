@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace GS.Gltf.Collision
 {
@@ -40,13 +41,8 @@ namespace GS.Gltf.Collision
                 return;
             }
 
-            foreach (var path in modelPaths)
-            {
-                if (!File.Exists(path))
-                {
-                    modelPaths.Remove(path);
-                }
-            }
+            modelPaths = modelPaths.Where(path => File.Exists(path)).ToList();
+
 
             if (modelPaths.Count == 0)
             {

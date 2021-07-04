@@ -3,6 +3,7 @@ using GS.Gltf.Collision.Helper;
 using GS.Gltf.Collision.Helpers;
 using GS.Gltf.Collision.Interfaces;
 using GS.Gltf.Collision.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -21,7 +22,7 @@ namespace GS.Gltf.Collision
         }
 
 
-        public CollisionResult Detect1()
+        public CollisionIntermediateResult Detect1()
         {
             //var models = settings.ModelPaths...
 
@@ -46,130 +47,84 @@ namespace GS.Gltf.Collision
             return null;
         }
 
-
-
-
-
-
-
-
-        public List<CollisionElement> Detect()
+        public List<CollisionIntermediateResult> Detect()
         {
             var reader = new GltfReader(settings.ModelPaths);
             models = reader.Models;
-            if (settings.InModelDetection)
-            {
-                foreach (var model in models)
-                {
-                    model.InterModelCollisions = CheckCollisionsIntoModel(model);
-                }
+            //if (settings.InModelDetection)
+            //{
+            //    foreach (var model in models)
+            //    {
+            //        model.InterModelCollisions = CheckCollisionsIntoModel(model);
+            //    }
                 
-            }
+            //}
 
             var modelCollisionPairs = MakeModelsCollisionPairs(models);
             var checkedModelCollisionPairs = CheckModelsCollisionPairs(modelCollisionPairs);
 
-            List<CollisionElement> checkedNodesCollisionPairs = null;
+            List<CollisionIntermediateResult> checkedNodesCollisionPairs = null;
             if (settings.ModelPaths.Count > 1)
             {
-                checkedNodesCollisionPairs = MakeAndCheckElementCollisionPair(checkedModelCollisionPairs);
+                checkedNodesCollisionPairs = CheckElementCollisionPair(checkedModelCollisionPairs);
             }
 
 
             return checkedNodesCollisionPairs;
         }
 
-        // Fufufu
-        private List<CollisionElement> CheckCollisionsIntoModel(ModelData model)
+        private List<Tuple<ModelData, ModelData>> MakeModelsCollisionPairs(List<ModelData> models)
         {
-            
-            var result = new List<CollisionElement>();
-            for (int i = 0; i < model.ElementMeshPrimitives.Count; i++)
-            {
-                for (int j = i; j < model.ElementMeshPrimitives.Count; j++)
-                {
-                    if (i != j)
-                    {
-                        var firstNode = model.ElementMeshPrimitives[i];
-                        var secondNode = model.ElementMeshPrimitives[j];
-
-                        var IsElementCollide = CheckCollision(firstNode, secondNode);
-
-                        if (IsElementCollide)
-                        {
-                            var indexPair = new KeyValuePair<string, string>(model.modelIndex.ToString(),firstNode.NodeName);
-                            var indexPair2 = new KeyValuePair<string, string>(model.modelIndex.ToString(),secondNode.NodeName);
-                            var z = firstNode.BoundingBox.GetBigCollisionBoundingBox(secondNode.BoundingBox);
-                            var triangleCollisions = CheckTriangleCollisions(firstNode, secondNode);
-                            var collision = new CollisionElement(indexPair, indexPair2, z, triangleCollisions);
-                            result.Add(collision);
-                        }
-                        
-
-                    }
-
-                }
-            }
-            result = result.Where(n => n.MinIntersectionBoundaries != null).ToList();
-            return result;
-        }
-
-        // Tuple<ModelData, ModelData> 
-        private List<ModelsCollisionPair> MakeModelsCollisionPairs(List<ModelData> models)
-        {
-            var result = new List<ModelsCollisionPair>();
-            //combinations by 2 without combinations and mirror copies
+            var result = new List<Tuple<ModelData, ModelData>>();
+            //combinations by 2 without mirror copies
             for (int i = 0; i < models.Count; i++)
             {
                 for (int j = i; j < models.Count; j++)
                 {
+                    var tuple = new Tuple<ModelData, ModelData>(models[i], models[j]);
                     if (i != j)
                     {
-                        result.Add(new ModelsCollisionPair()
-                        {
-                            firstModel = models[i],
-                            secondModel = models[j]
-                        });
+                        result.Add(tuple);
                     }
+                    else
+                    {
+                        if (settings.InModelDetection)
+                        {
+                            result.Add(tuple);
+                        }
+                    }
+                    
                 }
             }
             return result;
         }
 
-        private List<ModelsCollisionPair> CheckModelsCollisionPairs(List<ModelsCollisionPair> pairs) // or ref
+        private List<Tuple<ModelData, ModelData>> CheckModelsCollisionPairs(List<Tuple<ModelData,ModelData>> pairs)
         {
-            foreach (var pair in pairs)
-            {
-                if (CheckCollision(pair.firstModel, pair.secondModel))
-                {
-                    pair.IsModelCollide = true;
-                }
-            }
-            return pairs;
+            return pairs.Where(pair => CheckCollision(pair.Item1, pair.Item2)).ToList();
         }
 
-        private List<CollisionElement> MakeAndCheckElementCollisionPair(List<ModelsCollisionPair> pairs)
+        private List<CollisionIntermediateResult> CheckElementCollisionPair(List<Tuple<ModelData,ModelData>> pairs)
         {
-            var result = new List<CollisionElement>();
+            var result = new List<CollisionIntermediateResult>();
             foreach (var pair in pairs)
             {
-                if (pair.IsModelCollide)
+                
+                foreach (var element in pair.Item1.ElementMeshPrimitives)
                 {
-                    foreach (var element in pair.firstModel.ElementMeshPrimitives)
+                    foreach (var othElement in pair.Item2.ElementMeshPrimitives)
                     {
-                        foreach (var othElement in pair.secondModel.ElementMeshPrimitives)
-                        {
-                            var indexPair = new KeyValuePair<string, string>(pair.firstModel.modelIndex.ToString(),
-                                element.NodeName);
-                            var indexPair2 = new KeyValuePair<string, string>(pair.secondModel.modelIndex.ToString(),
-                                othElement.NodeName);
-                            var collisionBoundingBox = element.GetBoundingBox().GetBigCollisionBoundingBox(othElement.GetBoundingBox());
-                            var triangleCollisions = CheckTriangleCollisions(element, othElement);
-                            var collision = new CollisionElement(indexPair, indexPair2, collisionBoundingBox, triangleCollisions);
-                            result.Add(collision);
-                        }
+                        var indexPair = new KeyValuePair<string, string>(pair.Item1.modelIndex.ToString(),
+                            element.NodeName);
+                        var indexPair2 = new KeyValuePair<string, string>(pair.Item2.modelIndex.ToString(),
+                            othElement.NodeName);
+                        var collisionBoundingBox = element.GetBoundingBox().GetBigCollisionBoundingBox(othElement.GetBoundingBox());
+                        var triangleCollisions = CheckTriangleCollisions(element, othElement);
+                        var collision = new CollisionIntermediateResult(indexPair, indexPair2, collisionBoundingBox, triangleCollisions);
+                        result.Add(collision);
                     }
                 }
+                
             }
             return result;
         }
@@ -229,69 +184,8 @@ namespace GS.Gltf.Collision
 
     }
 
-    // TODO Should we remove this?
-    internal class ModelsCollisionPair
-    {
-        public ModelData firstModel;
-        public ModelData secondModel;
-        public bool IsModelCollide { get; set; } = false;
-    }
-
-    // TODO Should we remove this?
-    internal class ElementNodesCollision
-    {
-        public Element firstElement;
-        public Element secondElement;
-        public bool IsElementCollide;
-    }
-
     // TODO Move to the separate file and rename to CollisionResult.
-    public class CollisionElement
-    {
-        /// <summary>
-        /// key defines model intex and value defines node name
-        /// </summary>
-        public KeyValuePair<string, string> Element1;
-
-        /// <summary>
-        /// key defines model intex and value defines node name
-        /// </summary>
-        public KeyValuePair<string, string> Element2;
-
-        /// <summary>
-        /// Max AABB
-        /// </summary>
-        public BoundingBox Boundaries;
-
-        /// <summary>
-        /// BB based on points of intersection
-        /// </summary>
-        public BoundingBox MinIntersectionBoundaries;
-
-        // TODO Это должно формироваться в отдельном месте изнутри CollisionDetector при необходимости.
-        /// <summary>
-        /// collection of interseted triangles
-        /// </summary>
-        public List<TriangleCollision> Collisions;
-
-        public CollisionElement(KeyValuePair<string, string> element1, KeyValuePair<string, string> element2, BoundingBox boundaries, List<TriangleCollision> collisions)
-        {
-            Element1 = element1;
-            Element2 = element2;
-            Boundaries = boundaries;
-            Collisions = collisions;
-
-            var collisionPoints = new List<Vector3>();
-            foreach (var collision in Collisions)
-            {
-                collisionPoints.AddRange(collision.IntersectionPoints);
-            }
-            if (collisionPoints.Count > 0)
-            {
-                MinIntersectionBoundaries = new BoundingBox(collisionPoints);
-            }
-        }
-    }
+    
 
     // TODO Move to the separate file, make internal.
     public class TriangleCollision

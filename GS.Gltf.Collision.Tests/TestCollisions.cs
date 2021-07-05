@@ -13,17 +13,9 @@ namespace GS.Gltf.Collision.Tests
         [Test]
         public void InterModelCollisionsTest()
         {
-            // TODO Add test files to repo (rvt and gltf).
-            // Set pathes to the file as relative:
-            //typeof(TestMain).Assembly.Location
-
-
-
+            
             List<string> inputfiles = new List<string>()
             {
-                //Path.Combine("C:","gltf","collision","tests","box1","box1.gltf"),
-                //Path.Combine("C:","gltf","collision","tests","box2","box2.gltf"),
-                //Path.Combine("C:","gltf","collision","tests","box3","box3.gltf"),
                 Path.Combine(testRootPath,"Resources","box1","box1.gltf"),
                 Path.Combine(testRootPath,"Resources","box2","box2.gltf"),
             };
@@ -32,6 +24,7 @@ namespace GS.Gltf.Collision.Tests
             {
                 InModelDetection = false,
                 Delta = 0.1f,
+                HiglightCollisions = CollisionHighlighing.MergeAll,
             };
 
             var detector = new CollisionDetector(settings);
@@ -48,17 +41,19 @@ namespace GS.Gltf.Collision.Tests
 
             List<string> inputfiles = new List<string>()
             {
-                Path.Combine(testRootPath,"Resources","multicoliision_boxes","all_boxes.gltf"),
+                Path.Combine(testRootPath,"Resources","all_boxes2","all_boxes.gltf"),
             };
 
             var settings = new CollisionSettings(inputfiles)
             {
                 InModelDetection = true,
                 Delta = 0.1f,
+                HiglightCollisions = CollisionHighlighing.MergeAll
             };
 
             var detector = new CollisionDetector(settings);
-            detector.Detect();
+            var detectResult = detector.Detect();
+            
 
             // TODO Add elements to the file from inside the CollisionDetector depending on the property HiglightCollisions.
             //var root = new GltfReader(inputfiles).RawModels[0];
@@ -67,7 +62,7 @@ namespace GS.Gltf.Collision.Tests
             //{
             //    root.AddCollisionBBNode(collision.MinIntersectionBoundaries);
             //}
-            
+
             //root.SaveGLTF(Path.Combine("C:", "Resources", "all_boxes", "collision.gltf"));
             //root.SaveGLB(Path.Combine("C:", "Resources", "all_boxes", "test.glb"));
 

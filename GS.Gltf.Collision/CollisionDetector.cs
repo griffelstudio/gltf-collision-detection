@@ -33,6 +33,8 @@ namespace GS.Gltf.Collision
             var modelCollisionPairs = MakeModelsCollisionPairs(models);
             var checkedModelCollisionPairs = CheckModelsCollisionPairs(modelCollisionPairs);
             var result = CheckElementCollisionPair(checkedModelCollisionPairs);
+            result = result.Where(x => x.MinIntersectionBoundaries != null && x.Element1.Value != x.Element2.Value).ToList();
+            SaveCollisionModels(result);
             
             return result;
         }
@@ -125,47 +127,90 @@ namespace GS.Gltf.Collision
         {
             var result = new List<TriangleCollision>();
 
-            for (int i = 0; i < e1.Triangles.Count; i++)
+            //for (int i = 0; i < e1.Triangles.Count; i++)
+            //{
+            //    for (int j = 0; j < e2.Triangles.Count; j++)
+            //    {
+            //        var triange1 = e1.Triangles[i];
+            //        var triange2 = e2.Triangles[j];
+
+            //        var check = Triangle.TriangleTriangle(triange1, triange2);
+
+            //        if (check)
+            //        {
+            //            var intersectionPoints = new List<Vector3>();
+            //            foreach (var ray in triange1.GetEdgesRays())
+            //            {
+            //                var point = GeometryHelper.RaycastPoint(triange2, ray);
+            //                if (point != new Vector3())
+            //                {
+            //                    intersectionPoints.Add(point);
+            //                }
+
+
+            //            }
+
+            //            foreach (var ray in triange2.GetEdgesRays())
+            //            {
+            //                var point = GeometryHelper.RaycastPoint(triange1, ray);
+            //                if (point != new Vector3())
+            //                {
+            //                    intersectionPoints.Add(point);
+            //                }
+            //            }
+
+            //            result.Add(new TriangleCollision
+            //            {
+            //                ElementTriangle1 = i.ToString(),
+            //                ElementTriangle2 = j.ToString(),
+            //                IntersectionPoints = intersectionPoints,
+            //            });
+            //        }
+            //    }
+            //}
+
+            Parallel.For(0, e1.Triangles.Count, (i, state) =>
             {
-                for (int j = 0; j < e2.Triangles.Count; j++)
-                {
-                    var triange1 = e1.Triangles[i];
-                    var triange2 = e2.Triangles[j];
+                 for (int j = 0; j < e2.Triangles.Count; j++)
+                 {
+                     var triange1 = e1.Triangles[i];
+                     var triange2 = e2.Triangles[j];
 
-                    var check = Triangle.TriangleTriangle(triange1, triange2);
+                     var check = Triangle.TriangleTriangle(triange1, triange2);
 
-                    if (check)
-                    {
-                        var intersectionPoints = new List<Vector3>();
-                        foreach (var ray in triange1.GetEdgesRays())
-                        {
-                            var point = GeometryHelper.RaycastPoint(triange2, ray);
-                            if (point != new Vector3())
-                            {
-                                intersectionPoints.Add(point);
-                            }
-                            
-                            
-                        }
+                     if (check)
+                     {
+                         var intersectionPoints = new List<Vector3>();
+                         foreach (var ray in triange1.GetEdgesRays())
+                         {
+                             var point = GeometryHelper.RaycastPoint(triange2, ray);
+                             if (point != new Vector3())
+                             {
+                                 intersectionPoints.Add(point);
+                             }
 
-                        foreach (var ray in triange2.GetEdgesRays())
-                        {
-                            var point = GeometryHelper.RaycastPoint(triange1, ray);
-                            if (point != new Vector3())
-                            {
-                                intersectionPoints.Add(point);
-                            }
-                        }
 
-                        result.Add(new TriangleCollision
-                        {
-                            ElementTriangle1 = i.ToString(),
-                            ElementTriangle2 = j.ToString(),
-                            IntersectionPoints = intersectionPoints,
-                        });
-                    }
-                }
-            }
+                         }
+
+                         foreach (var ray in triange2.GetEdgesRays())
+                         {
+                             var point = GeometryHelper.RaycastPoint(triange1, ray);
+                             if (point != new Vector3())
+                             {
+                                 intersectionPoints.Add(point);
+                             }
+                         }
+
+                         result.Add(new TriangleCollision
+                         {
+                             ElementTriangle1 = i.ToString(),
+                             ElementTriangle2 = j.ToString(),
+                             IntersectionPoints = intersectionPoints,
+                         });
+                     }
+                 }
+            });
+
             return result;
         }
 
@@ -197,8 +242,11 @@ namespace GS.Gltf.Collision
                             mergedModel.SaveGLTF(Path.Combine(settings.OutputSavePath, "mergedtest.gltf"));
                         }
                     }
+                    else
+                    {
+                        throw new ArgumentException("Invalid Highlighing mode");
+                    }
                 }
-                throw new ArgumentException("Invalid Highlighing mode");
             }
         }
 

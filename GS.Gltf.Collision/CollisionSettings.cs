@@ -34,6 +34,8 @@ namespace GS.Gltf.Collision
 
         public CollisionHighlighing HiglightCollisions { get; set; } = CollisionHighlighing.None;
 
+        public string OutputSavePath = Path.Combine("C:", "gltf");
+
         public CollisionSettings(List<string> modelPaths)
         {
             if (modelPaths is null)

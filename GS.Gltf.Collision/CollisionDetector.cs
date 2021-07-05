@@ -3,8 +3,10 @@ using GS.Gltf.Collision.Helper;
 using GS.Gltf.Collision.Helpers;
 using GS.Gltf.Collision.Interfaces;
 using GS.Gltf.Collision.Models;
+using SharpGLTF.Schema2;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Threading;
@@ -16,41 +18,17 @@ namespace GS.Gltf.Collision
     {
         private CollisionSettings settings { get; }
         private List<ModelData> models;
+        private List<ModelRoot> rawModels;
 
         public CollisionDetector(CollisionSettings settings)
         {
             this.settings = settings;
         }
 
-
-        public CollisionIntermediateResult Detect1()
-        {
-            //var models = settings.ModelPaths...
-
-            // Формируем пары для пересечений.
-            // Если только одна модель - то создается копия модели и формируется одна пара с идентичными моделями.
-
-            // После того как метод Detect1(ниже) нашел коллизии
-            // в зависимости от настроек мы мержим файлы, дорисовываем кубики и т.д.
-
-            // кык красиво дорисовывать кубики:
-            // создадим отдельный хелпер, который ест CollisionIntermediateResult и создаёт необходимые файлы.
-
-            // Вызывать проверку Detect1 асинхронно.
-
-            return null;
-        }
-
-        private CollisionIntermediateResult Detect1(ModelData one, ModelData another)
-        {
-            // Где-то внутри будет ещё один асинхронный вызов проверки коллизий треугольников.
-
-            return null;
-        }
-
         public List<CollisionIntermediateResult> Detect()
         {
             var reader = new GltfReader(settings.ModelPaths);
+            rawModels = reader.RawModels;
             models = reader.Models;
             var modelCollisionPairs = MakeModelsCollisionPairs(models);
             var checkedModelCollisionPairs = CheckModelsCollisionPairs(modelCollisionPairs);
@@ -194,6 +172,34 @@ namespace GS.Gltf.Collision
         private bool CheckCollision(ICollidable firstObject, ICollidable secondObject)
         {
             return firstObject.GetBoundingBox().IsCollideWith(secondObject.GetBoundingBox());
+        }
+
+        private void SaveCollisionModels(List<CollisionIntermediateResult> collisions)
+        {
+            if (settings.HiglightCollisions == CollisionHighlighing.None)
+            {
+                return;
+            }
+            else
+            {
+                if (settings.HiglightCollisions == CollisionHighlighing.SeparateFile)
+                {
+         
+                }
+                else
+                {
+                    if (settings.HiglightCollisions == CollisionHighlighing.MergeAll)
+                    {
+                        var mergedModel = GltfHelper.MergeModels(rawModels);
+                        foreach (var collision in collisions)
+                        {
+                            mergedModel.AddCollisionBBNode(collision.MinIntersectionBoundaries);
+                            mergedModel.SaveGLTF(Path.Combine(settings.OutputSavePath, "mergedtest.gltf"));
+                        }
+                    }
+                }
+                throw new ArgumentException("Invalid Highlighing mode");
+            }
         }
 
     }

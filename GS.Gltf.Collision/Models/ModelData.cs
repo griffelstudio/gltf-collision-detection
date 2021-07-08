@@ -9,7 +9,7 @@ namespace GS.Gltf.Collision.Models
     /// <summary>
     /// Equivalent to the whole glTF file.
     /// </summary>
-    internal class ModelData : ICollidable // Consider inheritance from IClonable, or just create method which return copy of the model.
+    internal class ModelData : ICollidable
     {
         public int modelIndex;
         private List<Node> nodes;
@@ -17,7 +17,7 @@ namespace GS.Gltf.Collision.Models
         public List<Element> ElementMeshPrimitives;
         public Dictionary<int, List<AffineTransform>> NodeTransforms;
         public ModelPrimitive ModelPrimitive;
-        public List<CollisionIntermediateResult> InterModelCollisions;
+        public List<CollisionResult> InterModelCollisions;
 
         public ModelData(ModelRoot model, int modelIndex)
         {

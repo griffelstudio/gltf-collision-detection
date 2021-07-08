@@ -5,8 +5,7 @@ using System.Text;
 
 namespace GS.Gltf.Collision
 {
-    //TODO make internal
-    public class TriangleCollision
+    internal class TriangleCollision
     {
         public List<Vector3> IntersectionPoints;
         public string ElementTriangle1;

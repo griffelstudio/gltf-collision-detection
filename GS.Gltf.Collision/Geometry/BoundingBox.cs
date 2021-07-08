@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("GS.Gltf.Collision.Tests")]
 namespace GS.Gltf.Collision
 {
-    //TODO internal
+    
     public class BoundingBox
     {
         private const int VECTOR_3D_DIMENSION = 3;
@@ -16,8 +16,9 @@ namespace GS.Gltf.Collision
         private const int Y_DIM = 1;
         private const int Z_DIM = 2;
 
-        public float[] Min = new float[VECTOR_3D_DIMENSION];
-        public float[] Max = new float[VECTOR_3D_DIMENSION];
+        //delete 
+        private float[] Min = new float[VECTOR_3D_DIMENSION];
+        private float[] Max = new float[VECTOR_3D_DIMENSION];
 
         public Vector3 MinV;
         public Vector3 MaxV;
@@ -70,7 +71,7 @@ namespace GS.Gltf.Collision
             MinV.Z = Zs.Min();
         }
 
-        public BoundingBox(Accessor accessor)
+        internal BoundingBox(Accessor accessor)
         {
             MaxV.X = accessor.Max[X_DIM];
             MaxV.Y = accessor.Max[Y_DIM];
@@ -98,7 +99,7 @@ namespace GS.Gltf.Collision
             MinV = min;
         }
 
-        public bool IsCollideWith(BoundingBox other)
+        internal bool IsCollideWith(BoundingBox other)
         {
             float delta = CollisionConstants.Tolerance;
             return
@@ -107,7 +108,7 @@ namespace GS.Gltf.Collision
             (Math.Max(this.MaxV.Z, other.MaxV.Z) - Math.Min(this.MinV.Z, other.MinV.Z) + delta < this.MaxV.Z - this.MinV.Z + other.MaxV.Z - other.MinV.Z);
         }
 
-        public BoundingBox GetCollisionBoundingBox(BoundingBox other)
+        internal BoundingBox GetCollisionBoundingBox(BoundingBox other)
         {
             if (this.MaxV == other.MaxV && this.MinV == other.MinV)
             {
@@ -137,7 +138,7 @@ namespace GS.Gltf.Collision
 
         }
 
-        public BoundingBox GetBigCollisionBoundingBox(BoundingBox other)
+        internal BoundingBox GetBigCollisionBoundingBox(BoundingBox other)
         {
             if (this.MaxV == other.MaxV && this.MinV == other.MinV)
             {

@@ -1,15 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Numerics;
 
 namespace GS.Gltf.Collision
 {
     
-    public class CollisionIntermediateResult
+    public class CollisionResult
     {
-        /// <summary>
-        /// path to model
-        /// </summary>
-        public string Path { get; }
 
         /// <summary>
         /// key defines model intex and value defines node name
@@ -31,13 +28,12 @@ namespace GS.Gltf.Collision
         /// </summary>
         public BoundingBox MinIntersectionBoundaries;
 
-        // TODO Это должно формироваться в отдельном месте изнутри CollisionDetector при необходимости.
         /// <summary>
         /// collection of interseted triangles
         /// </summary>
-        public List<TriangleCollision> Collisions;
+        internal ConcurrentBag<TriangleCollision> Collisions;
 
-        public CollisionIntermediateResult(KeyValuePair<string, string> element1, KeyValuePair<string, string> element2, BoundingBox boundaries, List<TriangleCollision> collisions)
+        internal CollisionResult(KeyValuePair<string, string> element1, KeyValuePair<string, string> element2, BoundingBox boundaries, ConcurrentBag<TriangleCollision> collisions)
         {
             Element1 = element1;
             Element2 = element2;
@@ -47,7 +43,10 @@ namespace GS.Gltf.Collision
             var collisionPoints = new List<Vector3>();
             foreach (var collision in Collisions)
             {
-                collisionPoints.AddRange(collision.IntersectionPoints);
+                if (collision != null)
+                {
+                    collisionPoints.AddRange(collision.IntersectionPoints);
+                }
             }
             if (collisionPoints.Count > 0)
             {
@@ -56,8 +55,4 @@ namespace GS.Gltf.Collision
         }
     }
 
-    public class CollisionResult
-    {
-        public string Path { get; }
-    }
 }

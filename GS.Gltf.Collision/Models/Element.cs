@@ -37,10 +37,14 @@ namespace GS.Gltf.Collision.Models
                 var positionAccessor = primitive.VertexAccessors["POSITION"];
                 var accessorVector = Transformation.TransformAccessor(positionAccessor, transforms);
                 var indices = primitive.IndexAccessor;
-                CreateTriangles(accessorVector, indices.AsScalarArray());
+
+                CreateTriangles(accessorVector, indices.AsIndicesArray());
+
                 PositionVectors.AddRange(accessorVector);
             }
+            
             CreateBoundingBox();
+
         }
 
         public BoundingBox GetBoundingBox()
@@ -48,7 +52,7 @@ namespace GS.Gltf.Collision.Models
             return BoundingBox;
         }
 
-        private void CreateTriangles(List<Vector3> points, IList<float> indeces)
+        private void CreateTriangles(List<Vector3> points, SharpGLTF.Memory.IntegerArray indeces)
         {
             for (int i = 2; i < indeces.Count; i = i + 3)
             {

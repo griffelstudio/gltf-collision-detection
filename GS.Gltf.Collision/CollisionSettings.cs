@@ -10,7 +10,7 @@ namespace GS.Gltf.Collision
         None,
 
         /// <summary>
-        /// Red cubes are created in a separate file.
+        /// Red cubes are created in a separate file. only collision primitives
         /// </summary>
         SeparateFile,
 
@@ -31,10 +31,21 @@ namespace GS.Gltf.Collision
         public bool InModelDetection { get; set; } = false;
 
         public float Delta { get; set; } = CollisionConstants.Tolerance;
-
+        /// <summary>
+        /// collision save mode
+        /// </summary>
+        
         public CollisionHighlighing HiglightCollisions { get; set; } = CollisionHighlighing.None;
 
+        /// <summary>
+        /// Path to directory where collison result will be saved
+        /// </summary>
         public string OutputSavePath = Path.Combine("C:", "gltf");
+
+        /// <summary>
+        /// perform collicions by triangles
+        /// </summary>
+        public bool CheckTriangles { get; } = true;
 
         public CollisionSettings(List<string> modelPaths)
         {

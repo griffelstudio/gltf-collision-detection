@@ -24,11 +24,17 @@ namespace GS.Gltf.Collision.Helpers
             return newModel;
         }
 
+        public static ModelRoot CreateCleanModel()
+        {
+            ModelRoot newModel = ModelRoot.CreateModel();
+            Scene scene = newModel.UseScene(0);
+            return newModel;
+        }
+
         private static void AddNodes(ModelRoot recipientModel, ref ModelRoot patienteModel, Node startNode, Node startPatienteNode)
         {
             var Node = startNode;
             var enumerator = Node.VisualChildren.GetEnumerator();
-
             while (enumerator.MoveNext())
             {
                 var transforms = enumerator.Current.LocalTransform;
@@ -48,6 +54,8 @@ namespace GS.Gltf.Collision.Helpers
             }
             return null;
         }
+
+
 
 
     }

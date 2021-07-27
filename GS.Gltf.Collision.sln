@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GS.Gltf.Collision", "GS.Gltf.Collision\GS.Gltf.Collision.csproj", "{44102E29-593A-4D5C-B9D4-A75B02FE932E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GS.Gltf.Collision", "GS.Gltf.Collision\GS.Gltf.Collision.csproj", "{44102E29-593A-4D5C-B9D4-A75B02FE932E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GS.Gltf.Collision.Tests", "GS.Gltf.Collision.Tests\GS.Gltf.Collision.Tests.csproj", "{4947981B-177F-4D99-87CE-F056CE51AEF4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GS.Gltf.Collision.Tests", "GS.Gltf.Collision.Tests\GS.Gltf.Collision.Tests.csproj", "{4947981B-177F-4D99-87CE-F056CE51AEF4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "profiling", "profiling\profiling.csproj", "{4B2482C0-195A-486A-94BF-27369D274C76}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{4947981B-177F-4D99-87CE-F056CE51AEF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4947981B-177F-4D99-87CE-F056CE51AEF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4947981B-177F-4D99-87CE-F056CE51AEF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B2482C0-195A-486A-94BF-27369D274C76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B2482C0-195A-486A-94BF-27369D274C76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B2482C0-195A-486A-94BF-27369D274C76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B2482C0-195A-486A-94BF-27369D274C76}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

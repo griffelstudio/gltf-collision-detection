@@ -11,10 +11,10 @@ namespace GS.Gltf.Collision.Tests
         [Test]
         public void TestCollider()
         {
-            Assert.IsTrue(TestObjects.box1.IsCollideWith(TestObjects.box2));
-            Assert.IsFalse(TestObjects.box2.IsCollideWith(TestObjects.box4));
-            Assert.IsFalse(TestObjects.box1.IsCollideWith(TestObjects.box4));
-            Assert.IsFalse(TestObjects.box4.IsCollideWith(TestObjects.box5));
+            Assert.IsTrue(TestObjects.box1.IsCollideWith(TestObjects.box2, 0.01f));
+            Assert.IsFalse(TestObjects.box2.IsCollideWith(TestObjects.box4, 0.01f));
+            Assert.IsFalse(TestObjects.box1.IsCollideWith(TestObjects.box4, 0.01f));
+            Assert.IsFalse(TestObjects.box4.IsCollideWith(TestObjects.box5, 0.01f));
         }
 
         [Test]

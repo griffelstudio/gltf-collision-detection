@@ -1,4 +1,4 @@
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,7 +7,7 @@ namespace GS.Gltf.Collision.Tests
 {
     public class TestCollisions
     {
-        private readonly string path = typeof(TestCollisions).Assembly.Location; //TODO" C:\\work\\new_gltf_exporter\\gltf-collision-detection\\GS.Gltf.Collision.Tests\\bin\\Debug\\netcoreapp3.1\\GS.Gltf.Collision.Tests.dll"
+        private readonly string path = typeof(TestCollisions).Assembly.Location;
 
         string testRootPath = Directory.GetParent(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName).ToString();
 
@@ -27,7 +27,7 @@ namespace GS.Gltf.Collision.Tests
             {
                 InModelDetection = false,
                 Delta = 0.1f,
-                HiglightCollisions = CollisionHighlighing.MergeAll,
+                HiglightCollisions = CollisionHighlighing.FastMerge,
             };
 
             var detector = new CollisionDetector(settings);
@@ -42,14 +42,58 @@ namespace GS.Gltf.Collision.Tests
 
             List<string> inputfiles = new List<string>()
             {
-                Path.Combine(testRootPath,"Resources","BigModel","Hockey Arena.gltf"),
+                Path.Combine(testRootPath,"Resources","base_collisions","CollisionTest.gltf"),
             };
 
             var settings = new CollisionSettings(inputfiles)
             {
                 InModelDetection = true,
                 Delta = 0.1f,
-                HiglightCollisions = CollisionHighlighing.MergeAll
+                HiglightCollisions = CollisionHighlighing.MergeAll,
+            };
+
+            var detector = new CollisionDetector(settings);
+            var detectResult = detector.Detect();
+
+            Assert.Pass();
+        }
+
+        [Test]
+        public void PlaneTriangleInModelTest()
+        {
+
+            List<string> inputfiles = new List<string>()
+            {
+                Path.Combine(testRootPath,"Resources","crossed_plane_triangles","Collision Detection Test Primitives.gltf"),
+            };
+
+            var settings = new CollisionSettings(inputfiles)
+            {
+                InModelDetection = true,
+                Delta = 0.1f,
+                HiglightCollisions = CollisionHighlighing.MergeAll,
+            };
+
+            var detector = new CollisionDetector(settings);
+            var detectResult = detector.Detect();
+
+            Assert.Pass();
+        }
+
+        [Test]
+        public void DetailsLevelInModelTest()
+        {
+
+            List<string> inputfiles = new List<string>()
+            {
+                Path.Combine(testRootPath,"Resources","base_collisions_level15","CollisionTest.gltf"),
+            };
+
+            var settings = new CollisionSettings(inputfiles)
+            {
+                InModelDetection = true,
+                Delta = 0.01f,
+                HiglightCollisions = CollisionHighlighing.MergeAll,
             };
 
             var detector = new CollisionDetector(settings);

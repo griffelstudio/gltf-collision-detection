@@ -1,0 +1,165 @@
+{
+  "asset": {
+    "generator": "glTF Exporter addin for Revit",
+    "version": "2.0"
+  },
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "{3D}",
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "name": "Collision Detection Test Primitives",
+      "rotation": [
+        0.707106769,
+        0.0,
+        0.0,
+        -0.707106769
+      ],
+      "scale": [
+        0.3048,
+        0.3048,
+        0.3048
+      ],
+      "children": [
+        1
+      ]
+    },
+    {
+      "name": "Topography",
+      "children": [
+        2,
+        3
+      ]
+    },
+    {
+      "name": "263858",
+      "mesh": 0
+    },
+    {
+      "name": "263863",
+      "mesh": 1
+    }
+  ],
+  "meshes": [
+    {
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0,
+            "NORMAL": 1
+          },
+          "indices": 2
+        }
+      ]
+    },
+    {
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 3,
+            "NORMAL": 4
+          },
+          "indices": 5
+        }
+      ]
+    }
+  ],
+  "buffers": [
+    {
+      "uri": "Collision Detection Test Primitives.bin",
+      "byteLength": 156
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteOffset": 0,
+      "byteLength": 72,
+      "byteStride": 12,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 72,
+      "byteLength": 72,
+      "byteStride": 12,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 144,
+      "byteLength": 12,
+      "target": 34963
+    }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 3,
+      "type": "VEC3",
+      "max": [
+        -24.2061024,
+        -5.147495,
+        2.296588
+      ],
+      "min": [
+        -31.0958652,
+        -14.3338461,
+        2.296588
+      ]
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 3,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 0,
+      "componentType": 5123,
+      "count": 3,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 36,
+      "componentType": 5126,
+      "count": 3,
+      "type": "VEC3",
+      "max": [
+        -19.94101,
+        -5.147494,
+        2.296588
+      ],
+      "min": [
+        -26.8307743,
+        -14.3338461,
+        2.296588
+      ]
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 36,
+      "componentType": 5126,
+      "count": 3,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 6,
+      "componentType": 5123,
+      "count": 3,
+      "type": "SCALAR"
+    }
+  ]
+}

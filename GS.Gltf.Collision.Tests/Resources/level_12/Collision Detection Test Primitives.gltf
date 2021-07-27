@@ -1,0 +1,188 @@
+{
+  "asset": {
+    "generator": "glTF Exporter addin for Revit",
+    "version": "2.0"
+  },
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "{3D}",
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "name": "Collision Detection Test Primitives",
+      "rotation": [
+        0.707106769,
+        0.0,
+        0.0,
+        -0.707106769
+      ],
+      "scale": [
+        0.3048,
+        0.3048,
+        0.3048
+      ],
+      "children": [
+        1
+      ]
+    },
+    {
+      "name": "Entourage",
+      "children": [
+        2,
+        3
+      ]
+    },
+    {
+      "name": "264910",
+      "mesh": 0,
+      "matrix": [
+        0.358368,
+        -0.93358,
+        0.0,
+        0.0,
+        0.93358,
+        0.358368,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        -64.6587143,
+        33.9923668,
+        0.0,
+        1.0
+      ]
+    },
+    {
+      "name": "264923",
+      "mesh": 1,
+      "translation": [
+        -46.48842,
+        23.4352245,
+        0.0
+      ]
+    }
+  ],
+  "meshes": [
+    {
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0,
+            "NORMAL": 1
+          },
+          "indices": 2
+        }
+      ]
+    },
+    {
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 3,
+            "NORMAL": 4
+          },
+          "indices": 5
+        }
+      ]
+    }
+  ],
+  "buffers": [
+    {
+      "uri": "Collision Detection Test Primitives.bin",
+      "byteLength": 65184
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteOffset": 0,
+      "byteLength": 23124,
+      "byteStride": 12,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 23124,
+      "byteLength": 23124,
+      "byteStride": 12,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 46248,
+      "byteLength": 18936,
+      "target": 34963
+    }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 1103,
+      "type": "VEC3",
+      "max": [
+        0.907447,
+        17.92108,
+        4.92126
+      ],
+      "min": [
+        -0.536122,
+        16.47751,
+        0.0
+      ]
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 1103,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 0,
+      "componentType": 5123,
+      "count": 5442,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 13236,
+      "componentType": 5126,
+      "count": 824,
+      "type": "VEC3",
+      "max": [
+        1.615563,
+        20.96888,
+        3.764832
+      ],
+      "min": [
+        -2.583912,
+        16.7694054,
+        0.024674
+      ]
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 13236,
+      "componentType": 5126,
+      "count": 824,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 10884,
+      "componentType": 5123,
+      "count": 4026,
+      "type": "SCALAR"
+    }
+  ]
+}

@@ -16,7 +16,7 @@ namespace GS.Gltf.Collision
         private const int Y_DIM = 1;
         private const int Z_DIM = 2;
 
-        //delete 
+        //TODO delete 
         private float[] Min = new float[VECTOR_3D_DIMENSION];
         private float[] Max = new float[VECTOR_3D_DIMENSION];
 
@@ -99,13 +99,33 @@ namespace GS.Gltf.Collision
             MinV = min;
         }
 
-        internal bool IsCollideWith(BoundingBox other)
+        internal bool IsCollideWith2(BoundingBox other)
         {
             float delta = CollisionConstants.Tolerance;
+
+            var a = Math.Max(this.MaxV.X, other.MaxV.X) - Math.Min(this.MinV.X, other.MinV.X) + delta < this.MaxV.X - this.MinV.X + other.MaxV.X - other.MinV.X;
+            var b = (Math.Max(this.MaxV.Y, other.MaxV.Y) - Math.Min(this.MinV.Y, other.MinV.Y) + delta < this.MaxV.Y - this.MinV.Y + other.MaxV.Y - other.MinV.Y);
+            var c = (Math.Max(this.MaxV.Z, other.MaxV.Z) - Math.Min(this.MinV.Z, other.MinV.Z) + delta < this.MaxV.Z - this.MinV.Z + other.MaxV.Z - other.MinV.Z);
+
             return
             (Math.Max(this.MaxV.X, other.MaxV.X) - Math.Min(this.MinV.X, other.MinV.X) + delta < this.MaxV.X - this.MinV.X + other.MaxV.X - other.MinV.X) &&
             (Math.Max(this.MaxV.Y, other.MaxV.Y) - Math.Min(this.MinV.Y, other.MinV.Y) + delta < this.MaxV.Y - this.MinV.Y + other.MaxV.Y - other.MinV.Y) &&
             (Math.Max(this.MaxV.Z, other.MaxV.Z) - Math.Min(this.MinV.Z, other.MinV.Z) + delta < this.MaxV.Z - this.MinV.Z + other.MaxV.Z - other.MinV.Z);
+        }
+
+        internal bool IsCollideWith(BoundingBox other, float delta)
+        {
+            var a = this.MinV.X + delta <= other.MaxV.X;
+            var b = this.MaxV.X >= other.MinV.X + delta;
+            var c = this.MinV.Y <= other.MaxV.Y;
+            var d = this.MaxV.Y >= other.MinV.Y;
+            var f = this.MinV.Z <= other.MaxV.Z;
+            var e = this.MaxV.Z >= other.MinV.Z;
+
+
+            return (this.MinV.X + delta <= other.MaxV.X  && this.MaxV.X >= other.MinV.X + delta) &&
+                (this.MinV.Y + delta <= other.MaxV.Y + delta && this.MaxV.Y >= other.MinV.Y + delta) &&
+                (this.MinV.Z + delta <= other.MaxV.Z + delta && this.MaxV.Z >= other.MinV.Z + delta);
         }
 
         internal BoundingBox GetCollisionBoundingBox(BoundingBox other)
@@ -127,13 +147,23 @@ namespace GS.Gltf.Collision
             var firstDist = Vector3.Distance(this.MaxV, other.MinV);
             var secondDist = Vector3.Distance(this.MinV, other.MaxV);
 
+            Vector3 COLLISION_MIN_ALLIGN = new Vector3(-0.01f, -0.01f, -0.01f);
+            Vector3 COLLISION_MAX_ALLIGN = new Vector3(0.01f, 0.01f, 0.01f);
+
+
+            var othMin = Vector3.Add(other.MaxV, COLLISION_MIN_ALLIGN);
+            var othMax = Vector3.Add(other.MaxV, COLLISION_MAX_ALLIGN);
+
+            var min = Vector3.Add(this.MinV, COLLISION_MIN_ALLIGN);
+            var max = Vector3.Add(this.MaxV, COLLISION_MAX_ALLIGN);
+
             if (firstDist >= secondDist)
             {
-                return new BoundingBox(other.MaxV,this.MinV);
+                return new BoundingBox(othMax, min);
             }
             else
             {
-                return new BoundingBox(this.MaxV, other.MinV);
+                return new BoundingBox(max, othMin);
             }
 
         }

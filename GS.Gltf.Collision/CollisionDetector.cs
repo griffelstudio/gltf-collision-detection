@@ -34,8 +34,16 @@ namespace GS.Gltf.Collision
             var modelCollisionPairs = MakeModelsCollisionPairs(models);
             var checkedModelCollisionPairs = CheckModelsCollisionPairs(modelCollisionPairs);
             var result = CheckElementCollisionPair(checkedModelCollisionPairs);
-            //var trueResult = result.Select(n => new CollisionResult(n));// TODO
-            var new_result = result.ToList().Where(x => x.MinIntersectionBoundaries != null && x.Element1.Value != x.Element2.Value).ToList();
+            List<CollisionResult> new_result = null;
+            if(settings.HiglightCollisions == CollisionHighlighing.AABB)
+            {
+                new_result = result.ToList();
+            }
+            else
+            {
+                new_result = result.ToList().Where(x => x.MinIntersectionBoundaries != null && x.Element1.Value != x.Element2.Value).ToList();
+            }
+            
             SaveCollisionModels(new_result);
             
             return result.ToList();
@@ -75,43 +83,106 @@ namespace GS.Gltf.Collision
         private ConcurrentBag<CollisionResult> CheckElementCollisionPair(List<Tuple<ModelData,ModelData>> pairs)
         {
             var result = new ConcurrentBag<CollisionResult>();
+            List<Tuple<string, string>> a = new List<Tuple<string, string>>();
             Parallel.ForEach(pairs, pair =>
             {
                 foreach (var element in pair.Item1.ElementMeshPrimitives)
                 {
                     Parallel.ForEach(pair.Item2.ElementMeshPrimitives, othElement =>
                     {
-                       if (element.NodeName != othElement.NodeName || !settings.InModelDetection) // filter element self collisions
+                        bool isElemsCollide = element.GetBoundingBox().IsCollideWith(othElement.GetBoundingBox(), settings.Delta);
+                        if (isElemsCollide)
                         {
-                           var indexPair = new KeyValuePair<string, string>(pair.Item1.modelIndex.ToString(),
-                           element.NodeName);
-                           var indexPair2 = new KeyValuePair<string, string>(pair.Item2.modelIndex.ToString(),
-                               othElement.NodeName);
-                           var collisionBoundingBox = element.GetBoundingBox().GetBigCollisionBoundingBox(othElement.GetBoundingBox());
-                           ConcurrentBag<TriangleCollision> triangleCollisions = null;
-                           if (settings.CheckTriangles)
-                           {
-                               triangleCollisions = CheckTriangleCollisions(element, othElement);
-                           }
-                           var collision = new CollisionResult(indexPair, indexPair2, collisionBoundingBox, triangleCollisions);
-                           result.Add(collision);
-                       }
+
+                            if (element.NodeName != othElement.NodeName || !settings.InModelDetection) // filter element self collisions
+                            {
+                                var indexPair = new KeyValuePair<string, string>(pair.Item1.modelIndex.ToString(),
+                                element.NodeName);
+                                var indexPair2 = new KeyValuePair<string, string>(pair.Item2.modelIndex.ToString(),
+                                    othElement.NodeName);
+                                //a.Add(new Tuple<string,string>(element.NodeName, othElement.NodeName));
+                                var collisionBoundingBox = element.GetBoundingBox().GetBigCollisionBoundingBox(othElement.GetBoundingBox());
+                                ConcurrentBag<TriangleCollision> triangleCollisions = null;
+                                if (settings.CheckTriangles)
+                                {
+                                    triangleCollisions = CheckTriangleCollisions(element, othElement);
+                                }
+                                var intersectionBB = element.BoundingBox.GetCollisionBoundingBox(othElement.BoundingBox);
+                                var collision = new CollisionResult(indexPair, indexPair2, collisionBoundingBox, intersectionBB, triangleCollisions);
+                                result.Add(collision);
+                            }
+                        }
+
                     });
                 }
             });
             return result;
+            //var result = new ConcurrentBag<CollisionResult>();
+            //List<Tuple<string, string>> a = new List<Tuple<string, string>>();
+            //foreach (var pair in pairs)
+            //{
+            //    foreach (var element in pair.Item1.ElementMeshPrimitives)
+            //    {
+            //        foreach(var othElement in pair.Item2.ElementMeshPrimitives)
+            //        {
+            //            bool isElemsCollide = element.GetBoundingBox().IsCollideWith(othElement.GetBoundingBox());
+            //            if (isElemsCollide)
+            //            {
+
+            //                if (element.NodeName != othElement.NodeName || !settings.InModelDetection) // filter element self collisions
+            //                {
+            //                    var indexPair = new KeyValuePair<string, string>(pair.Item1.modelIndex.ToString(),
+            //                    element.NodeName);
+            //                    var indexPair2 = new KeyValuePair<string, string>(pair.Item2.modelIndex.ToString(),
+            //                        othElement.NodeName);
+            //                    //a.Add(new Tuple<string,string>(element.NodeName, othElement.NodeName));
+            //                    var collisionBoundingBox = element.GetBoundingBox().GetBigCollisionBoundingBox(othElement.GetBoundingBox());
+            //                    ConcurrentBag<TriangleCollision> triangleCollisions = null;
+            //                    if (settings.CheckTriangles)
+            //                    {
+            //                        triangleCollisions = CheckTriangleCollisions(element, othElement);
+            //                    }
+            //                    var collision = new CollisionResult(indexPair, indexPair2, collisionBoundingBox, triangleCollisions);
+            //                    result.Add(collision);
+            //                }
+            //            }
+
+            //        }
+            //    }
+            //}
         }
+
 
         private ConcurrentBag<TriangleCollision> CheckTriangleCollisions(Element e1, Element e2)
         {
             var result = new ConcurrentBag<TriangleCollision>();
-
-            Parallel.For(0, e1.Triangles.Count, (i, state) =>
+            var intersectionBB = e1.BoundingBox.GetCollisionBoundingBox(e2.BoundingBox);
+            var firstElemCollidedTriangles = new ConcurrentBag<Triangle>();
+            var secondElemCollidedTriangles = new ConcurrentBag<Triangle>();
+            Parallel.ForEach(e1.Triangles, triangle =>
             {
-                 for (int j = 0; j < e2.Triangles.Count; j++)
+                if (GeometryHelper.TriangleInBB(intersectionBB,triangle))
+                {
+                    firstElemCollidedTriangles.Add(triangle);
+                }
+            });
+            Parallel.ForEach(e2.Triangles, triangle =>
+            {
+                if (GeometryHelper.TriangleInBB(intersectionBB, triangle))
+                {
+                    secondElemCollidedTriangles.Add(triangle);
+                }
+            });
+            var firstElementTriangles = firstElemCollidedTriangles.ToList();
+            var secondElementTriangles = secondElemCollidedTriangles.ToList();
+
+            Parallel.For(0, firstElementTriangles.Count, (i, state) =>
+            {
+                //for (int j = 0; j < e2.Triangles.Count; j++)
+                Parallel.For(0, secondElementTriangles.Count, (j, state) =>
                  {
-                     var triange1 = e1.Triangles[i];
-                     var triange2 = e2.Triangles[j];
+                     var triange1 = firstElementTriangles[i];
+                     var triange2 = secondElementTriangles[j];
 
                      var check = Triangle.TriangleTriangle(triange1, triange2);
 
@@ -137,15 +208,16 @@ namespace GS.Gltf.Collision
                                  intersectionPoints.Add(point);
                              }
                          }
-
-                         result.Add(new TriangleCollision
+                         if (intersectionPoints.Count > 0)
                          {
-                             ElementTriangle1 = i.ToString(),
-                             ElementTriangle2 = j.ToString(),
-                             IntersectionPoints = intersectionPoints,
-                         });
+                             result.Add(new TriangleCollision
+                             {
+                                 IntersectionPoints = intersectionPoints,
+                             });
+                         }
+                         
                      }
-                 }
+                 });
             });
 
             return result;
@@ -153,14 +225,20 @@ namespace GS.Gltf.Collision
 
         private bool CheckCollision(ICollidable firstObject, ICollidable secondObject)
         {
-            return firstObject.GetBoundingBox().IsCollideWith(secondObject.GetBoundingBox());
+            return firstObject.GetBoundingBox().IsCollideWith(secondObject.GetBoundingBox(), settings.Delta);
         }
 
         private void SaveCollisionModels(List<CollisionResult> collisions)
         {
-            if (settings.HiglightCollisions == CollisionHighlighing.None)
+            if (settings.HiglightCollisions == CollisionHighlighing.None && settings.InModelDetection)
             {
-                return;
+                var model = rawModels.First();
+                foreach (var collision in collisions)
+                {
+                    model.AddCollisionBBNode(collision.MinIntersectionBoundaries);
+                    model.SaveGLTF(Path.Combine(settings.OutputSavePath, "inModelSave.gltf"));
+                }
+
             }
             else
             {
@@ -186,7 +264,36 @@ namespace GS.Gltf.Collision
                     }
                     else
                     {
-                        throw new ArgumentException("Invalid Highlighing mode");
+                        if (settings.HiglightCollisions == CollisionHighlighing.FastMerge)
+                        {
+                            Directory.CreateDirectory(settings.OutputSavePath);
+                            var mergedModelpath = Path.Combine(settings.OutputSavePath, "mergedtest.gltf");
+                            GltfHelper.Merge(mergedModelpath, settings.ModelPaths);
+                            var reader = new GltfReader();
+                            var mergedModel = reader.LoadGltfFromFile(mergedModelpath);
+                            foreach (var collision in collisions)
+                            {
+                                mergedModel.AddCollisionBBNode(collision.MinIntersectionBoundaries);
+                                mergedModel.SaveGLTF(mergedModelpath);
+                            }
+                        }
+                        else
+                        {
+                            if (settings.HiglightCollisions == CollisionHighlighing.AABB)
+                            {
+                                var mergedModel = GltfHelper.MergeModels(rawModels);
+                                foreach (var collision in collisions)
+                                {
+                                    mergedModel.AddCollisionBBNode(collision.IntersectionBoundaties);
+                                    mergedModel.SaveGLTF(Path.Combine(settings.OutputSavePath, "mergedtest.gltf"));
+                                }
+                            }
+                            else
+                            {
+                                throw new ArgumentException("Invalid Highlighing mode");
+                            }
+                            
+                        }
                     }
                 }
             }

@@ -29,16 +29,23 @@ namespace GS.Gltf.Collision
         public BoundingBox MinIntersectionBoundaries;
 
         /// <summary>
+        /// BB based on AABB intersecion
+        /// </summary>
+        public BoundingBox IntersectionBoundaties;
+
+        /// <summary>
         /// collection of interseted triangles
         /// </summary>
         internal ConcurrentBag<TriangleCollision> Collisions;
 
-        internal CollisionResult(KeyValuePair<string, string> element1, KeyValuePair<string, string> element2, BoundingBox boundaries, ConcurrentBag<TriangleCollision> collisions)
+        internal CollisionResult(KeyValuePair<string, string> element1, KeyValuePair<string, string> element2, BoundingBox boundaries,
+            BoundingBox intersecionBoundaries, ConcurrentBag<TriangleCollision> collisions)
         {
             Element1 = element1;
             Element2 = element2;
             Boundaries = boundaries;
             Collisions = collisions;
+            IntersectionBoundaties = intersecionBoundaries;
 
             var collisionPoints = new List<Vector3>();
             foreach (var collision in Collisions)

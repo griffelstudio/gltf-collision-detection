@@ -29,6 +29,34 @@ namespace GS.Gltf.Collision.Geometry
             return result;
         }
 
+        public static Interval GetInterval(BoundingBox bb, Vector3 axis)
+        {
+            Vector3 i = bb.MinV;
+            Vector3 a = bb.MaxV;
+
+            Vector3[] vertex = {
+                new Vector3(i.X, a.Y, a.Z),
+                new Vector3(i.X, a.Y, i.Z),
+                new Vector3(i.X, i.Y, a.Z),
+                new Vector3(i.X, i.Y, i.Z),
+                new Vector3(a.X, a.Y, a.Z),
+                new Vector3(a.X, a.Y, i.Z),
+                new Vector3(a.X, i.Y, a.Z),
+                new Vector3(a.X, i.Y, i.Z)
+            };
+
+            Interval result = new Interval();
+            result.min = result.max = Vector3.Dot(axis, vertex[0]);
+            for (int j = 1; j < 8; ++j)
+            {
+                float projection = Vector3.Dot(axis, vertex[j]);
+                result.min = (projection < result.min) ? projection : result.min;
+                result.max = (projection > result.max) ? projection : result.max;
+            }
+
+            return result;
+        }
+
 
     }
 
@@ -60,7 +88,7 @@ namespace GS.Gltf.Collision.Geometry
             Interval a = Interval.GetInterval(t1, axis);
             Interval b = Interval.GetInterval(t2, axis);
 
-            return ((b.min <= a.max) && (a.min <= b.max));
+            return ((b.min <= a.max) && (a.min <= b.max)); //TODO delta
         }
 
         public List<Ray> GetEdgesRays()

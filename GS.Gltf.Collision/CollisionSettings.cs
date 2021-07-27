@@ -18,6 +18,13 @@ namespace GS.Gltf.Collision
         /// Merges all gltf files and writes collision primitives there.
         /// </summary>
         MergeAll,
+
+        /// <summary>
+        /// Merge all file by copying all resourses on text level
+        /// </summary>
+        FastMerge,
+
+        AABB,
     }
 
     public class CollisionSettings
@@ -40,7 +47,7 @@ namespace GS.Gltf.Collision
         /// <summary>
         /// Path to directory where collison result will be saved
         /// </summary>
-        public string OutputSavePath = Path.Combine("C:", "gltf");
+        public string OutputSavePath = Path.Combine("C:", "gltf", "testFastMerge");
 
         /// <summary>
         /// perform collicions by triangles

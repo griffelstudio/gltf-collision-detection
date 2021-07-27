@@ -25,6 +25,11 @@ namespace GS.Gltf.Collision.Helpers
             }
         }
 
+        public GltfReader()
+        {
+
+        }
+
         public ModelRoot LoadGltfFromFile(string path)
         {
             return ModelRoot.Load(path);

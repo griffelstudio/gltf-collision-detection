@@ -19,6 +19,63 @@ namespace GS.Gltf.Collision.Helper
 
         }
 
+        public static bool PointInBB(BoundingBox box, Vector3 point)
+        {
+            if (point.X < box.MinV.X || point.Y < box.MinV.Y || point.Z < box.MinV.Z)
+            {
+                return false;
+            }
+            if (point.X > box.MaxV.X || point.Y > box.MaxV.Y || point.Z > box.MaxV.Z)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public static bool TriangleInBB(BoundingBox box, Triangle triangle)
+        {
+            Vector3 f0 = triangle.B - triangle.A;
+            Vector3 f1 = triangle.C - triangle.B;
+            Vector3 f2 = triangle.A - triangle.C;
+
+            Vector3 u0 = new Vector3(1.0f, 0.0f, 0.0f);
+            Vector3 u1 = new Vector3(0.0f, 1.0f, 0.0f);
+            Vector3 u2 = new Vector3(0.0f, 0.0f, 1.0f);
+
+            Vector3[] test = 
+            {
+                u0,
+                u1,
+                u2,
+                Vector3.Cross(f0,f1),
+                Vector3.Cross(u0,f0),
+                Vector3.Cross(u0,f1),
+                Vector3.Cross(u0,f2),
+                Vector3.Cross(u1,f0),
+                Vector3.Cross(u1,f1),
+                Vector3.Cross(u1,f2),
+                Vector3.Cross(u2,f0),
+                Vector3.Cross(u2,f1),
+                Vector3.Cross(u2,f2),
+            };
+
+            for (int i = 0; i < 13; i++)
+            {
+                if (!OverlapOnAxis(box,triangle,test[i]))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        public static bool OverlapOnAxis(BoundingBox bb, Triangle triangle, Vector3 axis)
+        {
+            Interval a = Interval.GetInterval(bb, axis);
+            Interval b = Interval.GetInterval(triangle, axis);
+
+            return ((b.min <= a.max) && (a.min <= b.max)); //TODO delta
+        }
+
         public static float MagnitudeSq(Vector3 v)
         {
             return Vector3.Dot(v, v);

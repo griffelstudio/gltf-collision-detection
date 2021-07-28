@@ -7,8 +7,6 @@ namespace GS.Gltf.Collision.Tests
 {
     public class TestCollisions
     {
-        private readonly string path = typeof(TestCollisions).Assembly.Location;
-
         string testRootPath = Directory.GetParent(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName).ToString();
 
         [Test]

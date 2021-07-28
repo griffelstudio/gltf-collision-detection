@@ -162,4 +162,16 @@ namespace GS.Gltf.Collision.Geometry
             direction = GeometryHelper.Normalized(to - from);
         }
     }
+
+    public class Line
+    {
+        public Vector3 Start;
+        public Vector3 End;
+
+        public Line(Vector3 start, Vector3 end)
+        {
+            Start = start;
+            End = end;
+        }
+    }
 }

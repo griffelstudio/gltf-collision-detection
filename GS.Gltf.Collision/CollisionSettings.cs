@@ -24,7 +24,7 @@ namespace GS.Gltf.Collision
         /// </summary>
         FastMerge,
 
-        AABB,
+        AABB, //TODO use checktriangles insted of this
     }
 
     public class CollisionSettings

@@ -100,7 +100,6 @@ namespace GS.Gltf.Collision
                                 element.NodeName);
                                 var indexPair2 = new KeyValuePair<string, string>(pair.Item2.modelIndex.ToString(),
                                     othElement.NodeName);
-                                //a.Add(new Tuple<string,string>(element.NodeName, othElement.NodeName));
                                 var collisionBoundingBox = element.GetBoundingBox().GetBigCollisionBoundingBox(othElement.GetBoundingBox());
                                 ConcurrentBag<TriangleCollision> triangleCollisions = null;
                                 if (settings.CheckTriangles)
@@ -117,39 +116,6 @@ namespace GS.Gltf.Collision
                 }
             });
             return result;
-            //var result = new ConcurrentBag<CollisionResult>();
-            //List<Tuple<string, string>> a = new List<Tuple<string, string>>();
-            //foreach (var pair in pairs)
-            //{
-            //    foreach (var element in pair.Item1.ElementMeshPrimitives)
-            //    {
-            //        foreach(var othElement in pair.Item2.ElementMeshPrimitives)
-            //        {
-            //            bool isElemsCollide = element.GetBoundingBox().IsCollideWith(othElement.GetBoundingBox());
-            //            if (isElemsCollide)
-            //            {
-
-            //                if (element.NodeName != othElement.NodeName || !settings.InModelDetection) // filter element self collisions
-            //                {
-            //                    var indexPair = new KeyValuePair<string, string>(pair.Item1.modelIndex.ToString(),
-            //                    element.NodeName);
-            //                    var indexPair2 = new KeyValuePair<string, string>(pair.Item2.modelIndex.ToString(),
-            //                        othElement.NodeName);
-            //                    //a.Add(new Tuple<string,string>(element.NodeName, othElement.NodeName));
-            //                    var collisionBoundingBox = element.GetBoundingBox().GetBigCollisionBoundingBox(othElement.GetBoundingBox());
-            //                    ConcurrentBag<TriangleCollision> triangleCollisions = null;
-            //                    if (settings.CheckTriangles)
-            //                    {
-            //                        triangleCollisions = CheckTriangleCollisions(element, othElement);
-            //                    }
-            //                    var collision = new CollisionResult(indexPair, indexPair2, collisionBoundingBox, triangleCollisions);
-            //                    result.Add(collision);
-            //                }
-            //            }
-
-            //        }
-            //    }
-            //}
         }
 
 
@@ -178,13 +144,12 @@ namespace GS.Gltf.Collision
 
             Parallel.For(0, firstElementTriangles.Count, (i, state) =>
             {
-                //for (int j = 0; j < e2.Triangles.Count; j++)
                 Parallel.For(0, secondElementTriangles.Count, (j, state) =>
                  {
                      var triange1 = firstElementTriangles[i];
                      var triange2 = secondElementTriangles[j];
 
-                     var check = Triangle.TriangleTriangle(triange1, triange2);
+                     var check = Triangle.TriangleTriangle(triange1, triange2); //TODO make out isCoplanar param
 
                      if (check)
                      {
@@ -196,8 +161,6 @@ namespace GS.Gltf.Collision
                              {
                                  intersectionPoints.Add(point);
                              }
-
-
                          }
 
                          foreach (var ray in triange2.GetEdgesRays())
@@ -214,6 +177,10 @@ namespace GS.Gltf.Collision
                              {
                                  IntersectionPoints = intersectionPoints,
                              });
+                         }
+                         else
+                         {
+                             
                          }
                          
                      }
@@ -248,8 +215,8 @@ namespace GS.Gltf.Collision
                     foreach (var collision in collisions)
                     {
                         model.AddCollisionBBNode(collision.MinIntersectionBoundaries);
-                        model.SaveGLTF(Path.Combine(settings.OutputSavePath, "cleantest.gltf"));
                     }
+                    model.SaveGLTF(Path.Combine(settings.OutputSavePath, "cleantest.gltf"));
                 }
                 else
                 {
@@ -259,8 +226,8 @@ namespace GS.Gltf.Collision
                         foreach (var collision in collisions)
                         {
                             mergedModel.AddCollisionBBNode(collision.MinIntersectionBoundaries);
-                            mergedModel.SaveGLTF(Path.Combine(settings.OutputSavePath, "mergedtest.gltf"));
                         }
+                        mergedModel.SaveGLTF(Path.Combine(settings.OutputSavePath, "mergedtest.gltf"));
                     }
                     else
                     {
@@ -274,8 +241,8 @@ namespace GS.Gltf.Collision
                             foreach (var collision in collisions)
                             {
                                 mergedModel.AddCollisionBBNode(collision.MinIntersectionBoundaries);
-                                mergedModel.SaveGLTF(mergedModelpath);
                             }
+                            mergedModel.SaveGLTF(mergedModelpath);
                         }
                         else
                         {
@@ -285,8 +252,8 @@ namespace GS.Gltf.Collision
                                 foreach (var collision in collisions)
                                 {
                                     mergedModel.AddCollisionBBNode(collision.IntersectionBoundaties);
-                                    mergedModel.SaveGLTF(Path.Combine(settings.OutputSavePath, "mergedtest.gltf"));
                                 }
+                                SaveModel(mergedModel);
                             }
                             else
                             {
@@ -297,6 +264,12 @@ namespace GS.Gltf.Collision
                     }
                 }
             }
+        }
+
+        private void SaveModel(ModelRoot model)
+        {
+            Directory.CreateDirectory(settings.OutputSavePath);
+            model.SaveGLTF(Path.Combine(settings.OutputSavePath, "mergedtest.gltf"));
         }
 
     }

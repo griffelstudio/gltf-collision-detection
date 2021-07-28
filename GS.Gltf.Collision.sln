@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GS.Gltf.Collision", "GS.Glt
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GS.Gltf.Collision.Tests", "GS.Gltf.Collision.Tests\GS.Gltf.Collision.Tests.csproj", "{4947981B-177F-4D99-87CE-F056CE51AEF4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "profiling", "profiling\profiling.csproj", "{4B2482C0-195A-486A-94BF-27369D274C76}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "demo", "profiling\demo.csproj", "{4B2482C0-195A-486A-94BF-27369D274C76}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

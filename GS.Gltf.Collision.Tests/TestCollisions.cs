@@ -25,7 +25,7 @@ namespace GS.Gltf.Collision.Tests
             {
                 InModelDetection = false,
                 Delta = 0.1f,
-                HiglightCollisions = CollisionHighlighting.FastMerge,
+                HiglightCollisions = CollisionHighlighting.MergeAll,
             };
 
             var detector = new CollisionDetector(settings);

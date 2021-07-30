@@ -18,13 +18,6 @@ namespace GS.Gltf.Collision
         /// Merges all gltf files and writes collision primitives there.
         /// </summary>
         MergeAll,
-
-        /// <summary>
-        /// Merge all file by copying all resourses on text level
-        /// </summary>
-        FastMerge,
-
-        AABB, //TODO use checktriangles insted of this
     }
 
     public class CollisionSettings

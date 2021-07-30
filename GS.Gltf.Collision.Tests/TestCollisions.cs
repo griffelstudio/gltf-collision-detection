@@ -25,7 +25,7 @@ namespace GS.Gltf.Collision.Tests
             {
                 InModelDetection = false,
                 Delta = 0.1f,
-                HiglightCollisions = CollisionHighlighing.FastMerge,
+                HiglightCollisions = CollisionHighlighting.FastMerge,
             };
 
             var detector = new CollisionDetector(settings);
@@ -40,14 +40,15 @@ namespace GS.Gltf.Collision.Tests
 
             List<string> inputfiles = new List<string>()
             {
-                Path.Combine(testRootPath,"Resources","base_collisions","CollisionTest.gltf"),
+                Path.Combine(testRootPath,"Resources","BigModel","Hockey Arena.gltf"),
             };
 
             var settings = new CollisionSettings(inputfiles)
             {
                 InModelDetection = true,
                 Delta = 0.1f,
-                HiglightCollisions = CollisionHighlighing.MergeAll,
+                HiglightCollisions = CollisionHighlighting.MergeAll,
+                OutputFilename = "testarena.gltf",
             };
 
             var detector = new CollisionDetector(settings);
@@ -69,7 +70,7 @@ namespace GS.Gltf.Collision.Tests
             {
                 InModelDetection = true,
                 Delta = 0.1f,
-                HiglightCollisions = CollisionHighlighing.MergeAll,
+                HiglightCollisions = CollisionHighlighting.MergeAll,
             };
 
             var detector = new CollisionDetector(settings);
@@ -91,7 +92,7 @@ namespace GS.Gltf.Collision.Tests
             {
                 InModelDetection = true,
                 Delta = 0.01f,
-                HiglightCollisions = CollisionHighlighing.MergeAll,
+                HiglightCollisions = CollisionHighlighting.MergeAll,
             };
 
             var detector = new CollisionDetector(settings);

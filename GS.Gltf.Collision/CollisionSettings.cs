@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace GS.Gltf.Collision
 {
-    public enum CollisionHighlighing
+    public enum CollisionHighlighting
     {
         None,
 
@@ -42,12 +42,17 @@ namespace GS.Gltf.Collision
         /// collision save mode
         /// </summary>
         
-        public CollisionHighlighing HiglightCollisions { get; set; } = CollisionHighlighing.None;
+        public CollisionHighlighting HiglightCollisions { get; set; } = CollisionHighlighting.None;
 
         /// <summary>
         /// Path to directory where collison result will be saved
         /// </summary>
         public string OutputSavePath = Path.Combine("C:", "gltf", "testFastMerge");
+
+        /// <summary>
+        /// merged filename
+        /// </summary>
+        public string OutputFilename = "output.gltf";
 
         /// <summary>
         /// perform collicions by triangles

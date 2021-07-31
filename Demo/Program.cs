@@ -62,9 +62,9 @@ namespace Demo
             var settings = new CollisionSettings(paths)
             {
                 Delta = 0.01f,
-                HiglightCollisions = args.HasParameter("-merge")
-                    ? CollisionHighlighting.MergeAll
-                    : CollisionHighlighting.SeparateFile,
+                OutputMode = args.HasParameter("-merge")
+                    ? OutputMode.MergeAll
+                    : OutputMode.SeparateFile,
                 OutputSavePath = Path.GetDirectoryName(output),
                 OutputFilename = Path.GetFileName(output),
                 InModelDetection = args.HasParameter("-inmodel"),

@@ -44,8 +44,9 @@ namespace GS.Gltf.Collision
 
             List<CollisionResult> new_result = default;
             new_result = result.ToList().Where(x => x.MinIntersectionBoundaries != null && x.Element1.Value != x.Element2.Value).ToList();
+            logger.LogInformation("Writing results...\n");
             SaveCollisionModels(new_result);
-            logger.LogInformation($"Result saved to {Path.Combine(settings.OutputSavePath, settings.OutputFilename)}");
+            logger.LogInformation($"Result saved to {Path.Combine(settings.OutputSavePath, settings.OutputFilename)}\n");
             logger.LogInformation("Finish collision detection.\n");
 
             return result.ToList();
@@ -200,7 +201,7 @@ namespace GS.Gltf.Collision
 
         private void SaveCollisionModels(List<CollisionResult> collisions)
         {
-            if (settings.HiglightCollisions == CollisionHighlighting.None && settings.InModelDetection)
+            if (settings.OutputMode == OutputMode.InMemory && settings.InModelDetection)
             {
                 var model = rawModels.First();
                 foreach (var collision in collisions)
@@ -211,7 +212,7 @@ namespace GS.Gltf.Collision
             }
             else
             {
-                if (settings.HiglightCollisions == CollisionHighlighting.SeparateFile)
+                if (settings.OutputMode == OutputMode.SeparateFile)
                 {
                     var model = GltfHelper.CreateCleanModel();
                     foreach (var collision in collisions)
@@ -222,7 +223,7 @@ namespace GS.Gltf.Collision
                 }
                 else
                 {
-                    if (settings.HiglightCollisions == CollisionHighlighting.MergeAll)
+                    if (settings.OutputMode == OutputMode.MergeAll)
                     {
                         var mergedModel = GltfHelper.MergeModels(rawModels);
                         foreach (var collision in collisions)

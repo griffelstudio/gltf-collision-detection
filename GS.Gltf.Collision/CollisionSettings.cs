@@ -1,13 +1,17 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
 namespace GS.Gltf.Collision
 {
-    public enum CollisionHighlighting
+    public enum OutputMode
     {
-        None,
+        /// <summary>
+        /// Don't create any output files, just keep results in memory.
+        /// </summary>
+        InMemory,
 
         /// <summary>
         /// Red cubes are created in a separate file. only collision primitives
@@ -20,59 +24,87 @@ namespace GS.Gltf.Collision
         MergeAll,
     }
 
+    /// <summary>
+    /// Settings applied to check collisions.
+    /// </summary>
     public class CollisionSettings
     {
-        public List<string> ModelPaths {get; set;}
+        /// <summary>
+        /// Paths to existing glTF files which are inter-checked for collisions.
+        /// </summary>
+        public List<string> ModelPaths {get; }
+
+        private bool inModelDetection = false;
 
         /// <summary>
-        /// Gets or sets value indicating if collision detector
-        /// should find intersections between elements of the same model.
+        /// Value indicating if collision detector should find intersections between elements of the same model.
         /// </summary>
-        public bool InModelDetection { get; set; } = false;
+        public bool InModelDetection
+        {
+            get => ModelPaths.Count > 1 ? inModelDetection : true;
+            set => inModelDetection = value;
+        }
 
+        /// <summary>
+        /// Minimum distance between points to consider elements intersecting.
+        /// </summary>
         public float Delta { get; set; } = CollisionConstants.Tolerance;
-        /// <summary>
-        /// collision save mode
-        /// </summary>
-        
-        public CollisionHighlighting HiglightCollisions { get; set; } = CollisionHighlighting.None;
 
         /// <summary>
-        /// Path to directory where collison result will be saved
+        /// Output mode.
         /// </summary>
-        public string OutputSavePath = Path.Combine("C:", "gltf", "testFastMerge");
+        public OutputMode OutputMode { get; set; } = OutputMode.MergeAll;
+
+        // TODO Get rid of this property.
+        [Obsolete("OutputFilename is enough")]
+        /// <summary>
+        /// Path to directory where collision result will be saved
+        /// </summary>
+        public string OutputSavePath { get; set; } = Path.Combine("C:", "gltf", "testFastMerge");
 
         /// <summary>
-        /// merged filename
+        /// Output file name.
         /// </summary>
-        public string OutputFilename = "output.gltf";
+        public string OutputFilename { get; set; } = "result.gltf";
 
         /// <summary>
-        /// perform collicions by triangles
+        /// Perform collision detections on triangles or just check bounding boxes.
         /// </summary>
-        public bool CheckTriangles { get; } = true;
+        public bool CheckTriangles { get; set; } = true;
 
-        public CollisionSettings(List<string> modelPaths)
+        // TODO Implement this option.
+        public int MaxDegreeOfParallelism
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Settings applied to check collisions.
+        /// </summary>
+        /// <param name="modelPaths">Paths to existing glTF files which are inter-checked for collisions.</param>
+        /// <exception cref="System.InvalidOperationException">Thrown if there is no any existing files.</exception>
+        public CollisionSettings(List<string> modelPaths, ILogger logger = null)
         {
             if (modelPaths is null)
             {
                 return;
             }
 
-            modelPaths = modelPaths.Where(path => File.Exists(path)).ToList();
+            var realFiles = modelPaths.Where(path => File.Exists(path)).ToList();
 
-
-            if (modelPaths.Count == 0)
+            if (realFiles.Count == 0)
             {
-                throw new InvalidOperationException("There aren't any valid path in list.");
+                throw new InvalidOperationException("There is no any valid path in the list.");
             }
 
-            if (modelPaths.Count == 1)
+            if (realFiles.Count < modelPaths.Count)
             {
-                InModelDetection = true;
+                // TODO Specify which files won't be calculated during the collision detection.
+                logger?.LogWarning("Some files won't be calculated.");
             }
 
-            ModelPaths = modelPaths;
+            ModelPaths = realFiles;
         }
     }
 }

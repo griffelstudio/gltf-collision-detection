@@ -25,7 +25,7 @@ namespace GS.Gltf.Collision.Tests
             {
                 InModelDetection = false,
                 Delta = 0.1f,
-                HiglightCollisions = CollisionHighlighting.MergeAll,
+                OutputMode = OutputMode.MergeAll,
             };
 
             var detector = new CollisionDetector(settings);
@@ -47,7 +47,7 @@ namespace GS.Gltf.Collision.Tests
             {
                 InModelDetection = true,
                 Delta = 0.1f,
-                HiglightCollisions = CollisionHighlighting.MergeAll,
+                OutputMode = OutputMode.MergeAll,
                 OutputFilename = "testarena.gltf",
             };
 
@@ -70,7 +70,7 @@ namespace GS.Gltf.Collision.Tests
             {
                 InModelDetection = true,
                 Delta = 0.1f,
-                HiglightCollisions = CollisionHighlighting.MergeAll,
+                OutputMode = OutputMode.MergeAll,
             };
 
             var detector = new CollisionDetector(settings);
@@ -92,7 +92,7 @@ namespace GS.Gltf.Collision.Tests
             {
                 InModelDetection = true,
                 Delta = 0.01f,
-                HiglightCollisions = CollisionHighlighting.MergeAll,
+                OutputMode = OutputMode.MergeAll,
             };
 
             var detector = new CollisionDetector(settings);

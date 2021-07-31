@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "Demo": {
-      "commandName": "Project",
-      "commandLineArgs": "-f C:\\Users\\crone\\Documents\\GitHub\\gltf-collision-detection\\GS.Gltf.Collision.Tests\\Resources\\base_collisions_level15\\CollisionDetectionTestPrimitives.gltf -m mergeall -d C:\\gltf\\testFastMerge\\testcli -o test.gltf --im true"
-    }
-  }
-}

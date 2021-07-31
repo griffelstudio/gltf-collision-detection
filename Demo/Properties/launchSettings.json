@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Demo": {
+      "commandName": "Project",
+      //"commandLineArgs": "-i \"Models\\CD Test Primitives 1.glb\" \"Models\\CD Test Primitives 2.glb\" -o result.gltf -merge"
+      //"commandLineArgs": "-i \"Models\\Hockey Arena.gltf\" -o result.gltf -inmodel",
+      "commandLineArgs": "-i \"Models\\CDTP.glb\" -o result.glb -inmodel"
+    }
+  }
+}

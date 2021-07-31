@@ -1,20 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+		<Authors>Alex Nazarov, Kiryl Ambrazheichyk</Authors>
+		<Company>Griffel Studio</Company>
+		<Product>glTF Collision Detection</Product>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Geometry\BoundingBox.cs~RFa3a566f.TMP" />
-    <None Remove="Geometry\CollisionPrimitive.cs~RFa4227e6.TMP" />
-  </ItemGroup>
+	<PropertyGroup>
+		<OutputPath>bin\$(Configuration)\</OutputPath>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="BepuUtilities" Version="2.3.0" />
-    <PackageReference Include="glTF2Loader" Version="1.1.3-alpha" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
-    <PackageReference Include="SharpGLTF.Core" Version="1.0.0-alpha0023" />
-    <PackageReference Include="SharpGLTF.Toolkit" Version="1.0.0-alpha0023" />
-  </ItemGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<DocumentationFile>$(OutputPath)\GS.Gltf.Collision.xml</DocumentationFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="glTF2Loader" Version="1.1.3-alpha" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
+		<PackageReference Include="SharpGLTF.Core" Version="1.0.0-alpha0023" />
+		<PackageReference Include="SharpGLTF.Toolkit" Version="1.0.0-alpha0023" />
+	</ItemGroup>
 
 </Project>

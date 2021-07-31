@@ -8,11 +8,9 @@ using SharpGLTF.Schema2;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -34,21 +32,22 @@ namespace GS.Gltf.Collision
 
         public List<CollisionResult> Detect()
         {
-            logger.LogInformation("check start \n");
+            logger.LogInformation("Start collision detection.\n");
+            logger.LogInformation("Finding elements to check for collisions...\n");
             var reader = new GltfReader(settings.ModelPaths);
             rawModels = reader.RawModels;
             models = reader.Models;
             var modelCollisionPairs = MakeModelsCollisionPairs(models);
-            logger.LogInformation("Pairs Created \n");
             var checkedModelCollisionPairs = CheckModelsCollisionPairs(modelCollisionPairs); //TODO make parallel?
-            logger.LogInformation("start Element checking \n");
+            logger.LogInformation("Detecting collisions...\n");
             var result = CheckElementCollisionPair(checkedModelCollisionPairs);
 
-            List<CollisionResult> new_result = null;
+            List<CollisionResult> new_result = default;
             new_result = result.ToList().Where(x => x.MinIntersectionBoundaries != null && x.Element1.Value != x.Element2.Value).ToList();
-            logger.LogInformation("check complete \n");
             SaveCollisionModels(new_result);
-            
+            logger.LogInformation($"Result saved to {Path.Combine(settings.OutputSavePath, settings.OutputFilename)}");
+            logger.LogInformation("Finish collision detection.\n");
+
             return result.ToList();
         }
 
@@ -72,7 +71,7 @@ namespace GS.Gltf.Collision
                             result.Add(tuple);
                         }
                     }
-                    
+
                 }
             }
             return result;
@@ -89,6 +88,7 @@ namespace GS.Gltf.Collision
             List<Tuple<string, string>> a = new List<Tuple<string, string>>();
             var errors = new ConcurrentBag<string>();
             int count = 0;
+            var totalPairs = pairs.Select(p => p.Item1.ElementMeshPrimitives.Count * p.Item2.ElementMeshPrimitives.Count).Sum();
             Parallel.ForEach(pairs, pair =>
             {
                 foreach (var element in pair.Item1.ElementMeshPrimitives)
@@ -97,11 +97,11 @@ namespace GS.Gltf.Collision
                     {
                         bool isElemsCollide = element.GetBoundingBox().IsCollideWith(othElement.GetBoundingBox(), settings.Delta);
                         Interlocked.Increment(ref count);
-                        logger.LogInformation($"\r\t{count} from {pair.Item1.ElementMeshPrimitives.Count * pair.Item2.ElementMeshPrimitives.Count}");
-                        
+                        logger.LogInformation($"\r\t{count} meshes from {totalPairs} checked");
+
                         if (isElemsCollide)
                         {
-                            
+
                             if (element.NodeName != othElement.NodeName || !settings.InModelDetection) // filter element self collisions
                             {
                                 var indexPair = new KeyValuePair<string, string>(pair.Item1.modelIndex.ToString(),
@@ -120,11 +120,10 @@ namespace GS.Gltf.Collision
                             }
                         }
                     });
-                    
+
                 }
-                logger.LogInformation($"\r\t{pair.Item1.ElementMeshPrimitives.Count * pair.Item2.ElementMeshPrimitives.Count} from {pair.Item1.ElementMeshPrimitives.Count * pair.Item2.ElementMeshPrimitives.Count}");
-                logger.LogInformation($"\n model {pair.Item1.modelIndex} and {pair.Item2.modelIndex} check complete \n");
             });
+            logger.LogInformation($"\r\t{totalPairs} meshes from {totalPairs} checked\n");
             return result;
         }
 
@@ -159,7 +158,7 @@ namespace GS.Gltf.Collision
                      var triange2 = secondElementTriangles[j];
 
                      var check = Triangle.TriangleTriangle(triange1, triange2); //TODO make out isCoplanar param
-                     
+
                      if (check)
                      {
                          var intersectionPoints = new List<Vector3>();
@@ -186,7 +185,7 @@ namespace GS.Gltf.Collision
                              {
                                  IntersectionPoints = intersectionPoints,
                              });
-                         }                         
+                         }
                      }
 
                  });
@@ -209,7 +208,6 @@ namespace GS.Gltf.Collision
                     model.AddCollisionBBNode(collision.MinIntersectionBoundaries);
                     SaveModel(model);
                 }
-
             }
             else
             {
@@ -236,7 +234,6 @@ namespace GS.Gltf.Collision
                     else
                     {
                         throw new ArgumentException("Invalid Highlighing mode");
-                      
                     }
                 }
             }
@@ -246,11 +243,6 @@ namespace GS.Gltf.Collision
         {
             Directory.CreateDirectory(settings.OutputSavePath);
             model.SaveGLTF(Path.Combine(settings.OutputSavePath, settings.OutputFilename));
-            logger.LogInformation($"result saved to {Path.Combine(settings.OutputSavePath, settings.OutputFilename)}");
         }
-
     }
-
-
-
 }

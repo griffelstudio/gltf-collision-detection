@@ -132,7 +132,7 @@ namespace GS.Gltf.Collision
             var secondElemCollidedTriangles = new ConcurrentBag<Triangle>();
             Parallel.ForEach(e1.Triangles, triangle =>
             {
-                //if (GeometryHelper.TriangleInBB(intersectionBB,triangle))
+                if (GeometryHelper.TriangleInBB(intersectionBB,triangle))
                 {
                     firstElemCollidedTriangles.Add(triangle);
                 }

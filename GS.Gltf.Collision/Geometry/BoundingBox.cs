@@ -37,11 +37,11 @@ namespace GS.Gltf.Collision
                 if (points[i].X < Min.X)
                     Min.X = points[i].X;
 
-                if (points[i].X < Min.X)
-                    Min.X = points[i].X;
+                if (points[i].Y < Min.Y)
+                    Min.Y = points[i].Y;
 
-                if (points[i].X < Min.X)
-                    Min.X = points[i].X;
+                if (points[i].Z < Min.Z)
+                    Min.Z = points[i].Z;
             }
         }
 
@@ -73,6 +73,7 @@ namespace GS.Gltf.Collision
             Min = min;
         }
 
+        // TODO Decide if it's needed.
         internal bool IsCollideWith2(BoundingBox other)
         {
             float delta = CollisionConstants.Tolerance;

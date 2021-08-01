@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace GS.Gltf.Collision.Models
 {
-    [DebuggerDisplay("{modelindex}")]
+    [DebuggerDisplay("Index - {modelIndex}, nodes - {nodes.Count}")]
     /// <summary>
     /// Equivalent to the whole glTF file.
     /// </summary>

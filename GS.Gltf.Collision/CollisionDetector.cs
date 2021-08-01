@@ -142,6 +142,7 @@ namespace GS.Gltf.Collision
                     firstElemCollidedTriangles.Add(triangle);
                 }
             });
+
             Parallel.ForEach(e2.Triangles, triangle =>
             {
                 if (GeometryHelper.TriangleInBB(intersectionBB, triangle))
@@ -149,6 +150,7 @@ namespace GS.Gltf.Collision
                     secondElemCollidedTriangles.Add(triangle);
                 }
             });
+
             var firstElementTriangles = firstElemCollidedTriangles.ToList();
             var secondElementTriangles = secondElemCollidedTriangles.ToList();
             Parallel.For(0, firstElementTriangles.Count, (i, state) =>
@@ -180,6 +182,7 @@ namespace GS.Gltf.Collision
                                  intersectionPoints.Add(point);
                              }
                          }
+
                          if (intersectionPoints.Count > 0)
                          {
                              result.Add(new TriangleCollision
@@ -201,49 +204,38 @@ namespace GS.Gltf.Collision
 
         private void SaveCollisionModels(List<CollisionResult> collisions)
         {
-            if (settings.OutputMode == OutputMode.InMemory && settings.InModelDetection)
+            var model = settings.OutputMode switch
             {
-                var model = rawModels.First();
-                foreach (var collision in collisions)
-                {
-                    model.AddCollisionBBNode(collision.MinIntersectionBoundaries);
-                    SaveModel(model);
-                }
-            }
-            else
+                OutputMode.InMemory => rawModels.First(),
+                OutputMode.MergeAll => GltfHelper.MergeModels(rawModels),
+                OutputMode.SeparateFile => GltfHelper.CreateCleanModel(),
+            };
+
+            foreach (var collision in collisions)
             {
-                if (settings.OutputMode == OutputMode.SeparateFile)
-                {
-                    var model = GltfHelper.CreateCleanModel();
-                    foreach (var collision in collisions)
-                    {
-                        model.AddCollisionBBNode(collision.MinIntersectionBoundaries);
-                    }
-                    SaveModel(model);
-                }
-                else
-                {
-                    if (settings.OutputMode == OutputMode.MergeAll)
-                    {
-                        var mergedModel = GltfHelper.MergeModels(rawModels);
-                        foreach (var collision in collisions)
-                        {
-                            mergedModel.AddCollisionBBNode(collision.MinIntersectionBoundaries);
-                        }
-                        SaveModel(mergedModel);
-                    }
-                    else
-                    {
-                        throw new ArgumentException("Invalid Highlighing mode");
-                    }
-                }
+                model.AddCollisionBBNode(collision.MinIntersectionBoundaries);
             }
+
+            SaveModel(model);
         }
 
         private void SaveModel(ModelRoot model)
         {
+            if (settings.OutputMode == OutputMode.InMemory)
+            {
+                return;
+            }
+
             Directory.CreateDirectory(settings.OutputSavePath);
-            model.SaveGLTF(Path.Combine(settings.OutputSavePath, settings.OutputFilename));
+            var fullPath = Path.Combine(settings.OutputSavePath, settings.OutputFilename);
+            if (Path.GetExtension(settings.OutputFilename).Equals(CollisionConstants.GlbFileExtension))
+            {
+                model.SaveGLB(fullPath);
+            }
+            else
+            {
+                model.SaveGLTF(fullPath);
+            }
         }
     }
 }

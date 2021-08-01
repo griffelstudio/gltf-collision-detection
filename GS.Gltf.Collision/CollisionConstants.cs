@@ -4,5 +4,9 @@
     {
         // 1 mm
         public const float Tolerance = 0.001f;
+
+        public const string GlbFileExtension = ".glb";
+
+        public const string GltfFileExtension = ".gltf";
     }
 }

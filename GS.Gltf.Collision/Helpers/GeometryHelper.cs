@@ -21,11 +21,11 @@ namespace GS.Gltf.Collision.Helper
 
         public static bool PointInBB(BoundingBox box, Vector3 point)
         {
-            if (point.X < box.MinV.X || point.Y < box.MinV.Y || point.Z < box.MinV.Z)
+            if (point.X < box.Min.X || point.Y < box.Min.Y || point.Z < box.Min.Z)
             {
                 return false;
             }
-            if (point.X > box.MaxV.X || point.Y > box.MaxV.Y || point.Z > box.MaxV.Z)
+            if (point.X > box.Max.X || point.Y > box.Max.Y || point.Z > box.Max.Z)
             {
                 return false;
             }
@@ -42,7 +42,7 @@ namespace GS.Gltf.Collision.Helper
             Vector3 u1 = new Vector3(0.0f, 1.0f, 0.0f);
             Vector3 u2 = new Vector3(0.0f, 0.0f, 1.0f);
 
-            Vector3[] test = 
+            Vector3[] test =
             {
                 u0,
                 u1,
@@ -68,6 +68,7 @@ namespace GS.Gltf.Collision.Helper
             }
             return true;
         }
+
         public static bool OverlapOnAxis(BoundingBox bb, Triangle triangle, Vector3 axis)
         {
             Interval a = Interval.GetInterval(bb, axis);

@@ -15,8 +15,8 @@ namespace GS.Gltf.Collision.Geometry
 
         public CollisionPrimitive(BoundingBox box)
         {
-            var min = box.MinV;
-            var max = box.MaxV;
+            var min = box.Min;
+            var max = box.Max;
 
             Vector3 COLLISION_MIN_ALLIGN = new Vector3(-0.01f,-0.01f,-0.01f);
             Vector3 COLLISION_MAX_ALLIGN = new Vector3(0.01f, 0.01f, 0.01f);

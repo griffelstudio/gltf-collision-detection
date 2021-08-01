@@ -31,8 +31,8 @@ namespace GS.Gltf.Collision.Geometry
 
         public static Interval GetInterval(BoundingBox bb, Vector3 axis)
         {
-            Vector3 i = bb.MinV;
-            Vector3 a = bb.MaxV;
+            Vector3 i = bb.Min;
+            Vector3 a = bb.Max;
 
             Vector3[] vertex = {
                 new Vector3(i.X, a.Y, a.Z),

@@ -2,10 +2,12 @@
 using SharpGLTF.Schema2;
 using SharpGLTF.Transforms;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace GS.Gltf.Collision.Models
 {
+    [DebuggerDisplay("{modelindex}")]
     /// <summary>
     /// Equivalent to the whole glTF file.
     /// </summary>
@@ -25,7 +27,7 @@ namespace GS.Gltf.Collision.Models
             nodes.AddRange(model.LogicalNodes);
             this.nodes = nodes;
             nodesWithGeometry = nodes.Where(n => n.Mesh is object).ToList();
-            
+
             NodeTransforms = CollectNodesTransforms();
             ElementMeshPrimitives = GetNodePrimitives(nodesWithGeometry, modelIndex);
 
@@ -36,7 +38,7 @@ namespace GS.Gltf.Collision.Models
         public Dictionary<int, List<AffineTransform>> CollectNodesTransforms()
         {
             var NodeTransformsData = new Dictionary<int, List<AffineTransform>>();
-            
+
             foreach (var node in nodesWithGeometry)
             {
                 var transformations = new List<AffineTransform>();

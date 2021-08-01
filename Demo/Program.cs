@@ -13,19 +13,11 @@ namespace Demo
         {
             var logger = new DemoLogger();
 
-            while (args.Length == 0)
-            {
-                Console.WriteLine("Available args:" +
-                    "\n -i input files;" +
-                    "\n -o output file name;" +
-                    "\n -inmodel whether to check collisions in the model itself;" +
-                    "\n -merge whether to merge all models into one file;");
-            }
-
-            if (args.HasParameter("exit"))
-            {
-                return;
-            }
+            Console.WriteLine("Available args:" +
+                "\n -i input files;" +
+                "\n -o output file name;" +
+                "\n -inmodel whether to check collisions in the model itself;" +
+                "\n -merge whether to merge all models into one file;");
 
             var currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
@@ -56,8 +48,6 @@ namespace Demo
             {
                 output = Path.Combine(inputDirectory, output);
             }
-
-            //Directory.CreateDirectory(output);
 
             var settings = new CollisionSettings(paths)
             {

@@ -19,9 +19,12 @@ namespace GS.Gltf.Collision.Models
         public List<MeshPrimitive> Primitives;
         public List<Vector3> PositionVectors;
         public BoundingBox BoundingBox;
+
+        // TODO Remove?
         public List<float> Xs = new List<float>();
         public List<float> Ys = new List<float>();
         public List<float> Zs = new List<float>();
+
         public List<Triangle> Triangles = new List<Triangle>();
 
         public Element(int nodeIndex, int modelIndex, List<MeshPrimitive> primitives, string nodeName, List<AffineTransform> transforms)
@@ -42,7 +45,7 @@ namespace GS.Gltf.Collision.Models
 
                 PositionVectors.AddRange(accessorVector);
             }
-            
+
             CreateBoundingBox();
 
         }
@@ -63,39 +66,29 @@ namespace GS.Gltf.Collision.Models
         private void CreateBoundingBox()
         {
             var minX = PositionVectors[0].X;
-            var minY = PositionVectors[0].Y;
-            var minZ = PositionVectors[0].Z;
-
             var maxX = PositionVectors[0].X;
+            var minY = PositionVectors[0].Y;
+
             var maxY = PositionVectors[0].Y;
+            var minZ = PositionVectors[0].Z;
             var maxZ = PositionVectors[0].Z;
 
-            foreach (var vector in PositionVectors)
+            for (int i = 1; i < PositionVectors.Count; i++)
             {
-                minX = Math.Min(vector.X, minX);
-                minY = Math.Min(vector.Y, minY);
-                minZ = Math.Min(vector.Z, minZ);
+                minX = Math.Min(PositionVectors[i].X, minX);
+                minY = Math.Min(PositionVectors[i].Y, minY);
+                minZ = Math.Min(PositionVectors[i].Z, minZ);
 
-                maxX = Math.Max(vector.X, maxX);
-                maxY = Math.Max(vector.Y, maxY);
-                maxZ = Math.Max(vector.Z, maxZ);
+                maxX = Math.Max(PositionVectors[i].X, maxX);
+                maxY = Math.Max(PositionVectors[i].Y, maxY);
+                maxZ = Math.Max(PositionVectors[i].Z, maxZ);
 
-                Xs.Add(vector.X);
-                Ys.Add(vector.Y);
-                Zs.Add(vector.Z);
+                Xs.Add(PositionVectors[i].X);
+                Ys.Add(PositionVectors[i].Y);
+                Zs.Add(PositionVectors[i].Z);
             }
 
-            float[] min = new float[3]
-            {
-                minX, minY, minZ
-            };
-
-            float[] max = new float[3]
-            {
-                maxX, maxY, maxZ
-            };
-
-            BoundingBox = new BoundingBox(max, min);
+            BoundingBox = new BoundingBox(new Vector3(maxX, maxY, maxZ), new Vector3(minX, minY, minZ));
         }
     }
 }

@@ -52,49 +52,44 @@ namespace GS.Gltf.Collision
             return result.ToList();
         }
 
-        private List<Tuple<ModelData, ModelData>> MakeModelsCollisionPairs(List<ModelData> models)
+        private Dictionary<ModelData, ModelData> MakeModelsCollisionPairs(List<ModelData> models)
         {
-            var result = new List<Tuple<ModelData, ModelData>>();
-            //combinations by 2 without mirror copies
+            var res = new Dictionary<ModelData, ModelData>();
             for (int i = 0; i < models.Count; i++)
             {
                 for (int j = i; j < models.Count; j++)
                 {
-                    var tuple = new Tuple<ModelData, ModelData>(models[i], models[j]);
-                    if (i != j)
+                    if (i == j && !settings.InModelDetection)
                     {
-                        result.Add(tuple);
-                    }
-                    else
-                    {
-                        if (settings.InModelDetection)
-                        {
-                            result.Add(tuple);
-                        }
+                        continue;
                     }
 
+                    res[models[i]] = models[j];
                 }
             }
-            return result;
+
+            return res;
         }
 
-        private List<Tuple<ModelData, ModelData>> CheckModelsCollisionPairs(List<Tuple<ModelData,ModelData>> pairs)
+        private Dictionary<ModelData, ModelData> CheckModelsCollisionPairs(Dictionary<ModelData, ModelData> pairs)
         {
-            return pairs.Where(pair => CheckCollision(pair.Item1, pair.Item2)).ToList();
+            return pairs
+                .Where(pair => CheckCollision(pair.Key, pair.Value))
+                .ToDictionary(p => p.Key, p => p.Value);
         }
 
-        private ConcurrentBag<CollisionResult> CheckElementCollisionPair(List<Tuple<ModelData,ModelData>> pairs)
+        private ConcurrentBag<CollisionResult> CheckElementCollisionPair(Dictionary<ModelData, ModelData> pairs)
         {
             var result = new ConcurrentBag<CollisionResult>();
             List<Tuple<string, string>> a = new List<Tuple<string, string>>();
-            var errors = new ConcurrentBag<string>();
+            //var errors = new ConcurrentBag<string>();
             int count = 0;
-            var totalPairs = pairs.Select(p => p.Item1.ElementMeshPrimitives.Count * p.Item2.ElementMeshPrimitives.Count).Sum();
+            var totalPairs = pairs.Select(p => p.Key.ElementMeshPrimitives.Count * p.Value.ElementMeshPrimitives.Count).Sum();
             Parallel.ForEach(pairs, pair =>
             {
-                foreach (var element in pair.Item1.ElementMeshPrimitives)
+                foreach (var element in pair.Key.ElementMeshPrimitives)
                 {
-                    Parallel.ForEach(pair.Item2.ElementMeshPrimitives, othElement =>
+                    Parallel.ForEach(pair.Value.ElementMeshPrimitives, othElement =>
                     {
                         bool isElemsCollide = element.GetBoundingBox().IsCollideWith(othElement.GetBoundingBox(), settings.Delta);
                         Interlocked.Increment(ref count);
@@ -105,9 +100,9 @@ namespace GS.Gltf.Collision
 
                             if (element.NodeName != othElement.NodeName || !settings.InModelDetection) // filter element self collisions
                             {
-                                var indexPair = new KeyValuePair<string, string>(pair.Item1.modelIndex.ToString(),
+                                var indexPair = new KeyValuePair<string, string>(pair.Key.modelIndex.ToString(),
                                 element.NodeName);
-                                var indexPair2 = new KeyValuePair<string, string>(pair.Item2.modelIndex.ToString(),
+                                var indexPair2 = new KeyValuePair<string, string>(pair.Value.modelIndex.ToString(),
                                     othElement.NodeName);
                                 var collisionBoundingBox = element.GetBoundingBox().GetBigCollisionBoundingBox(othElement.GetBoundingBox());
                                 ConcurrentBag<TriangleCollision> triangleCollisions = null;
@@ -137,7 +132,7 @@ namespace GS.Gltf.Collision
             var secondElemCollidedTriangles = new ConcurrentBag<Triangle>();
             Parallel.ForEach(e1.Triangles, triangle =>
             {
-                if (GeometryHelper.TriangleInBB(intersectionBB,triangle))
+                //if (GeometryHelper.TriangleInBB(intersectionBB,triangle))
                 {
                     firstElemCollidedTriangles.Add(triangle);
                 }
@@ -155,7 +150,8 @@ namespace GS.Gltf.Collision
             var secondElementTriangles = secondElemCollidedTriangles.ToList();
             Parallel.For(0, firstElementTriangles.Count, (i, state) =>
             {
-                Parallel.For(0, secondElementTriangles.Count, (j, state) =>
+                for (int j = 0; j < secondElementTriangles.Count; j++)
+                //Parallel.For(0, secondElementTriangles.Count, (j, state) =>
                  {
                      var triange1 = firstElementTriangles[i];
                      var triange2 = secondElementTriangles[j];
@@ -192,7 +188,7 @@ namespace GS.Gltf.Collision
                          }
                      }
 
-                 });
+                 }
             });
             return result;
         }

@@ -1,161 +1,135 @@
 ﻿using glTFLoader.Schema;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("GS.Gltf.Collision.Tests")]
 namespace GS.Gltf.Collision
 {
-    
+
     public class BoundingBox
     {
-        private const int VECTOR_3D_DIMENSION = 3;
         private const int X_DIM = 0;
         private const int Y_DIM = 1;
         private const int Z_DIM = 2;
 
-        //TODO delete 
-        private float[] Min = new float[VECTOR_3D_DIMENSION];
-        private float[] Max = new float[VECTOR_3D_DIMENSION];
-
-        public Vector3 MinV;
-        public Vector3 MaxV;
-
-        public BoundingBox(List<Accessor> accessors)
-        {
-            var maxVectors = new List<float[]>();
-            var minVectors = new List<float[]>();
-
-            foreach (var accessor in accessors)
-            {
-                maxVectors.Add(accessor.Max);
-                minVectors.Add(accessor.Min);
-            }
-
-            for (int dim = 0; dim < VECTOR_3D_DIMENSION; dim++)
-            {
-                Min[dim] = minVectors.Min(v => v[dim]);
-                Max[dim] = minVectors.Max(v => v[dim]);
-            }
-
-            MaxV.X = Max[X_DIM];
-            MaxV.Y = Max[Y_DIM];
-            MaxV.Z = Max[Z_DIM];
-
-            MinV.X = Min[X_DIM];
-            MinV.Y = Min[Y_DIM];
-            MinV.Z = Min[Z_DIM];
-        }
+        public Vector3 Min;
+        public Vector3 Max;
 
         public BoundingBox(List<Vector3> points)
         {
-            var Xs = new List<float>();
-            var Ys = new List<float>();
-            var Zs = new List<float>();
+            Max.X = Min.X = points[0].X;
+            Max.Y = Min.Y = points[0].Y;
+            Max.Z = Min.Z = points[0].Z;
 
-            foreach (var point in points)
+            for (int i = 1; i < points.Count; i++)
             {
-                Xs.Add(point.X);
-                Ys.Add(point.Y);
-                Zs.Add(point.Z);
+                if (points[i].X > Max.X)
+                    Max.X = points[i].X;
+
+                if (points[i].Y > Max.Y)
+                    Max.Y = points[i].Y;
+
+                if (points[i].Z > Max.Z)
+                    Max.Z = points[i].Z;
+
+                if (points[i].X < Min.X)
+                    Min.X = points[i].X;
+
+                if (points[i].X < Min.X)
+                    Min.X = points[i].X;
+
+                if (points[i].X < Min.X)
+                    Min.X = points[i].X;
             }
-
-            MaxV.X = Xs.Max();
-            MaxV.Y = Ys.Max();
-            MaxV.Z = Zs.Max();
-
-            MinV.X = Xs.Min();
-            MinV.Y = Ys.Min();
-            MinV.Z = Zs.Min();
         }
 
         internal BoundingBox(Accessor accessor)
         {
-            MaxV.X = accessor.Max[X_DIM];
-            MaxV.Y = accessor.Max[Y_DIM];
-            MaxV.Z = accessor.Max[Z_DIM];
+            Max.X = accessor.Max[X_DIM];
+            Max.Y = accessor.Max[Y_DIM];
+            Max.Z = accessor.Max[Z_DIM];
 
-            MinV.X = accessor.Min[X_DIM];
-            MinV.Y = accessor.Min[Y_DIM];
-            MinV.Z = accessor.Min[Z_DIM];
+            Min.X = accessor.Min[X_DIM];
+            Min.Y = accessor.Min[Y_DIM];
+            Min.Z = accessor.Min[Z_DIM];
         }
 
         public BoundingBox(float[] max, float[] min)
         {
-            MaxV.X = max[X_DIM];
-            MaxV.Y = max[Y_DIM];
-            MaxV.Z = max[Z_DIM];
+            Max.X = max[X_DIM];
+            Max.Y = max[Y_DIM];
+            Max.Z = max[Z_DIM];
 
-            MinV.X = min[X_DIM];
-            MinV.Y = min[Y_DIM];
-            MinV.Z = min[Z_DIM];
+            Min.X = min[X_DIM];
+            Min.Y = min[Y_DIM];
+            Min.Z = min[Z_DIM];
         }
 
         public BoundingBox(Vector3 max, Vector3 min)
         {
-            MaxV = max;
-            MinV = min;
+            Max = max;
+            Min = min;
         }
 
         internal bool IsCollideWith2(BoundingBox other)
         {
             float delta = CollisionConstants.Tolerance;
 
-            var a = Math.Max(this.MaxV.X, other.MaxV.X) - Math.Min(this.MinV.X, other.MinV.X) + delta < this.MaxV.X - this.MinV.X + other.MaxV.X - other.MinV.X;
-            var b = (Math.Max(this.MaxV.Y, other.MaxV.Y) - Math.Min(this.MinV.Y, other.MinV.Y) + delta < this.MaxV.Y - this.MinV.Y + other.MaxV.Y - other.MinV.Y);
-            var c = (Math.Max(this.MaxV.Z, other.MaxV.Z) - Math.Min(this.MinV.Z, other.MinV.Z) + delta < this.MaxV.Z - this.MinV.Z + other.MaxV.Z - other.MinV.Z);
+            var a = Math.Max(this.Max.X, other.Max.X) - Math.Min(this.Min.X, other.Min.X) + delta < this.Max.X - this.Min.X + other.Max.X - other.Min.X;
+            var b = (Math.Max(this.Max.Y, other.Max.Y) - Math.Min(this.Min.Y, other.Min.Y) + delta < this.Max.Y - this.Min.Y + other.Max.Y - other.Min.Y);
+            var c = (Math.Max(this.Max.Z, other.Max.Z) - Math.Min(this.Min.Z, other.Min.Z) + delta < this.Max.Z - this.Min.Z + other.Max.Z - other.Min.Z);
 
             return
-            (Math.Max(this.MaxV.X, other.MaxV.X) - Math.Min(this.MinV.X, other.MinV.X) + delta < this.MaxV.X - this.MinV.X + other.MaxV.X - other.MinV.X) &&
-            (Math.Max(this.MaxV.Y, other.MaxV.Y) - Math.Min(this.MinV.Y, other.MinV.Y) + delta < this.MaxV.Y - this.MinV.Y + other.MaxV.Y - other.MinV.Y) &&
-            (Math.Max(this.MaxV.Z, other.MaxV.Z) - Math.Min(this.MinV.Z, other.MinV.Z) + delta < this.MaxV.Z - this.MinV.Z + other.MaxV.Z - other.MinV.Z);
+            (Math.Max(this.Max.X, other.Max.X) - Math.Min(this.Min.X, other.Min.X) + delta < this.Max.X - this.Min.X + other.Max.X - other.Min.X) &&
+            (Math.Max(this.Max.Y, other.Max.Y) - Math.Min(this.Min.Y, other.Min.Y) + delta < this.Max.Y - this.Min.Y + other.Max.Y - other.Min.Y) &&
+            (Math.Max(this.Max.Z, other.Max.Z) - Math.Min(this.Min.Z, other.Min.Z) + delta < this.Max.Z - this.Min.Z + other.Max.Z - other.Min.Z);
         }
 
         internal bool IsCollideWith(BoundingBox other, float delta)
         {
-            var a = this.MinV.X + delta <= other.MaxV.X;
-            var b = this.MaxV.X >= other.MinV.X + delta;
-            var c = this.MinV.Y <= other.MaxV.Y;
-            var d = this.MaxV.Y >= other.MinV.Y;
-            var f = this.MinV.Z <= other.MaxV.Z;
-            var e = this.MaxV.Z >= other.MinV.Z;
+            var a = this.Min.X + delta <= other.Max.X;
+            var b = this.Max.X >= other.Min.X + delta;
+            var c = this.Min.Y <= other.Max.Y;
+            var d = this.Max.Y >= other.Min.Y;
+            var f = this.Min.Z <= other.Max.Z;
+            var e = this.Max.Z >= other.Min.Z;
 
 
-            return (this.MinV.X + delta <= other.MaxV.X  && this.MaxV.X >= other.MinV.X + delta) &&
-                (this.MinV.Y + delta <= other.MaxV.Y + delta && this.MaxV.Y >= other.MinV.Y + delta) &&
-                (this.MinV.Z + delta <= other.MaxV.Z + delta && this.MaxV.Z >= other.MinV.Z + delta);
+            return (this.Min.X + delta <= other.Max.X  && this.Max.X >= other.Min.X + delta) &&
+                (this.Min.Y + delta <= other.Max.Y + delta && this.Max.Y >= other.Min.Y + delta) &&
+                (this.Min.Z + delta <= other.Max.Z + delta && this.Max.Z >= other.Min.Z + delta);
         }
 
         internal BoundingBox GetCollisionBoundingBox(BoundingBox other)
         {
-            if (this.MaxV == other.MaxV && this.MinV == other.MinV)
+            if (this.Max == other.Max && this.Min == other.Min)
             {
-                return new BoundingBox(MaxV, MinV); //equal BB
+                return new BoundingBox(Max, Min); //equal BB
             }
-            if ((this.MaxV.X > other.MaxV.X) && (this.MaxV.Y > other.MaxV.Y) && (this.MaxV.Z > other.MaxV.Z) &&
-               (this.MinV.X < other.MinV.X) && (this.MinV.Y < other.MinV.Y) && (this.MinV.Z < other.MinV.Z))
+            if ((this.Max.X > other.Max.X) && (this.Max.Y > other.Max.Y) && (this.Max.Z > other.Max.Z) &&
+               (this.Min.X < other.Min.X) && (this.Min.Y < other.Min.Y) && (this.Min.Z < other.Min.Z))
             {
-                return new BoundingBox(this.MaxV, this.MinV); //this include other
+                return new BoundingBox(this.Max, this.Min); //this include other
             }
-            if ((other.MaxV.X >= this.MaxV.X) && (other.MaxV.Y >= this.MaxV.Y) && (other.MaxV.Z >= this.MaxV.Z) &&
-               (other.MinV.X <= this.MinV.X) && (other.MinV.Y <= this.MinV.Y) && (other.MinV.Z <= this.MinV.Z))
+            if ((other.Max.X >= this.Max.X) && (other.Max.Y >= this.Max.Y) && (other.Max.Z >= this.Max.Z) &&
+               (other.Min.X <= this.Min.X) && (other.Min.Y <= this.Min.Y) && (other.Min.Z <= this.Min.Z))
             {
-                return new BoundingBox(this.MaxV, this.MinV); //other include this
+                return new BoundingBox(this.Max, this.Min); //other include this
             }
-            var firstDist = Vector3.Distance(this.MaxV, other.MinV);
-            var secondDist = Vector3.Distance(this.MinV, other.MaxV);
+            var firstDist = Vector3.Distance(this.Max, other.Min);
+            var secondDist = Vector3.Distance(this.Min, other.Max);
 
             Vector3 COLLISION_MIN_ALLIGN = new Vector3(-0.01f, -0.01f, -0.01f);
             Vector3 COLLISION_MAX_ALLIGN = new Vector3(0.01f, 0.01f, 0.01f);
 
 
-            var othMin = Vector3.Add(other.MaxV, COLLISION_MIN_ALLIGN);
-            var othMax = Vector3.Add(other.MaxV, COLLISION_MAX_ALLIGN);
+            var othMin = Vector3.Add(other.Min, COLLISION_MIN_ALLIGN);
+            var othMax = Vector3.Add(other.Max, COLLISION_MAX_ALLIGN);
 
-            var min = Vector3.Add(this.MinV, COLLISION_MIN_ALLIGN);
-            var max = Vector3.Add(this.MaxV, COLLISION_MAX_ALLIGN);
+            var min = Vector3.Add(this.Min, COLLISION_MIN_ALLIGN);
+            var max = Vector3.Add(this.Max, COLLISION_MAX_ALLIGN);
 
             if (firstDist >= secondDist)
             {
@@ -170,13 +144,13 @@ namespace GS.Gltf.Collision
 
         internal BoundingBox GetBigCollisionBoundingBox(BoundingBox other)
         {
-            if (this.MaxV == other.MaxV && this.MinV == other.MinV)
+            if (this.Max == other.Max && this.Min == other.Min)
             {
-                return new BoundingBox(MaxV, MinV); //equal BB
+                return new BoundingBox(Max, Min); //equal BB
             }
 
-            var MaxMax = Vector3.Max(this.MaxV, other.MaxV);
-            var MinMin = Vector3.Min(this.MinV, other.MinV);
+            var MaxMax = Vector3.Max(this.Max, other.Max);
+            var MinMin = Vector3.Min(this.Min, other.Min);
 
             return new BoundingBox(MaxMax, MinMin);
         }

@@ -73,7 +73,7 @@ namespace GS.Gltf.Collision
         public bool CheckTriangles { get; set; } = true;
 
         // TODO Implement this option.
-        public int MaxDegreeOfParallelism
+        public int? MaxDegreeOfParallelism
         {
             get;
             set;

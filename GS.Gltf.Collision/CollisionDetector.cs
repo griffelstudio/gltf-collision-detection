@@ -16,25 +16,41 @@ using System.Threading.Tasks;
 
 namespace GS.Gltf.Collision
 {
+    /// <summary>
+    /// Main class of the library which processes files, finds collisions and produces output according to the <see cref="CollisionSettings"/> defined.
+    /// </summary>
     public class CollisionDetector
     {
-        private CollisionSettings settings { get; }
         private List<ModelData> models;
         private List<ModelRoot> rawModels;
         private ILogger logger;
 
-
+        /// <summary>
+        /// Creates an instance of the <see cref="CollisionDetector"/> class
+        /// </summary>
+        /// <param name="settings">Settings, according to which files are being processed and output is calculated.</param>
+        /// <param name="logger">Optional logger.</param>
         public CollisionDetector(CollisionSettings settings, ILogger logger = null)
         {
-            this.settings = settings;
+            this.Settings = settings;
             this.logger = logger;
         }
 
+        /// <summary>
+        /// Settings, according to which files are being processed and output is calculated.
+        /// </summary>
+        public CollisionSettings Settings { get; }
+
+        /// <summary>
+        /// Starts collision detection with the <see cref="CollisionSettings"/> defined.
+        /// </summary>
+        /// <returns></returns>
         public List<CollisionResult> Detect()
         {
             logger.LogInformation("Start collision detection.\n");
             logger.LogInformation("Finding elements to check for collisions...\n");
-            var reader = new GltfReader(settings.ModelPaths);
+
+            var reader = new GltfReader(Settings.ModelPaths);
             rawModels = reader.RawModels;
             models = reader.Models;
             var modelCollisionPairs = MakeModelsCollisionPairs(models);
@@ -46,7 +62,7 @@ namespace GS.Gltf.Collision
             new_result = result.ToList().Where(x => x.MinIntersectionBoundaries != null && x.Element1.Value != x.Element2.Value).ToList();
             logger.LogInformation("Writing results...\n");
             SaveCollisionModels(new_result);
-            logger.LogInformation($"Result saved to {Path.Combine(settings.OutputSavePath, settings.OutputFilename)}\n");
+            logger.LogInformation($"Result saved to {Path.Combine(Settings.OutputSavePath, Settings.OutputFilename)}\n");
             logger.LogInformation("Finish collision detection.\n");
 
             return result.ToList();
@@ -59,7 +75,7 @@ namespace GS.Gltf.Collision
             {
                 for (int j = i; j < models.Count; j++)
                 {
-                    if (i == j && !settings.InModelDetection)
+                    if (i == j && !Settings.InModelDetection)
                     {
                         continue;
                     }
@@ -91,14 +107,14 @@ namespace GS.Gltf.Collision
                 {
                     Parallel.ForEach(pair.Value.ElementMeshPrimitives, othElement =>
                     {
-                        bool isElemsCollide = element.GetBoundingBox().IsCollideWith(othElement.GetBoundingBox(), settings.Delta);
+                        bool isElemsCollide = element.GetBoundingBox().IsCollideWith(othElement.GetBoundingBox(), Settings.Delta);
                         Interlocked.Increment(ref count);
                         logger.LogInformation($"\r\t{count} meshes from {totalPairs} checked");
 
                         if (isElemsCollide)
                         {
 
-                            if (element.NodeName != othElement.NodeName || !settings.InModelDetection) // filter element self collisions
+                            if (element.NodeName != othElement.NodeName || !Settings.InModelDetection) // filter element self collisions
                             {
                                 var indexPair = new KeyValuePair<string, string>(pair.Key.modelIndex.ToString(),
                                 element.NodeName);
@@ -106,7 +122,7 @@ namespace GS.Gltf.Collision
                                     othElement.NodeName);
                                 var collisionBoundingBox = element.GetBoundingBox().GetBigCollisionBoundingBox(othElement.GetBoundingBox());
                                 ConcurrentBag<TriangleCollision> triangleCollisions = null;
-                                if (settings.CheckTriangles)
+                                if (Settings.CheckTriangles)
                                 {
                                     triangleCollisions = CheckTriangleCollisions(element, othElement);
                                 }
@@ -195,12 +211,12 @@ namespace GS.Gltf.Collision
 
         private bool CheckCollision(ICollidable firstObject, ICollidable secondObject)
         {
-            return firstObject.GetBoundingBox().IsCollideWith(secondObject.GetBoundingBox(), settings.Delta);
+            return firstObject.GetBoundingBox().IsCollideWith(secondObject.GetBoundingBox(), Settings.Delta);
         }
 
         private void SaveCollisionModels(List<CollisionResult> collisions)
         {
-            var model = settings.OutputMode switch
+            var model = Settings.OutputMode switch
             {
                 OutputMode.InMemory => rawModels.First(),
                 OutputMode.MergeAll => GltfHelper.MergeModels(rawModels),
@@ -217,14 +233,14 @@ namespace GS.Gltf.Collision
 
         private void SaveModel(ModelRoot model)
         {
-            if (settings.OutputMode == OutputMode.InMemory)
+            if (Settings.OutputMode == OutputMode.InMemory)
             {
                 return;
             }
 
-            Directory.CreateDirectory(settings.OutputSavePath);
-            var fullPath = Path.Combine(settings.OutputSavePath, settings.OutputFilename);
-            if (Path.GetExtension(settings.OutputFilename).Equals(CollisionConstants.GlbFileExtension))
+            Directory.CreateDirectory(Settings.OutputSavePath);
+            var fullPath = Path.Combine(Settings.OutputSavePath, Settings.OutputFilename);
+            if (Path.GetExtension(Settings.OutputFilename).Equals(CollisionConstants.GlbFileExtension))
             {
                 model.SaveGLB(fullPath);
             }

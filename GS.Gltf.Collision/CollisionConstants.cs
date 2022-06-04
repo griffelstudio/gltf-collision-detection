@@ -1,8 +1,11 @@
 ﻿namespace GS.Gltf.Collision
 {
-    public static class CollisionConstants
+
+    internal static class CollisionConstants
     {
-        // 1 mm
+        /// <summary>
+        /// 1 mm.
+        /// </summary>
         public const float Tolerance = 0.001f;
 
         public const string GlbFileExtension = ".glb";

@@ -4,39 +4,40 @@ using System.Numerics;
 
 namespace GS.Gltf.Collision
 {
-    
+    /// <summary>
+    /// Class which describes a single geometry intersection.
+    /// </summary>
     public class CollisionResult
     {
+        /// <summary>
+        /// Key defines model index and value defines node name.
+        /// </summary>
+        public KeyValuePair<string, string> Element1 { get; set; }
 
         /// <summary>
-        /// key defines model intex and value defines node name
+        /// Key defines model index and value defines node name.
         /// </summary>
-        public KeyValuePair<string, string> Element1;
+        public KeyValuePair<string, string> Element2 { get; set; }
 
         /// <summary>
-        /// key defines model intex and value defines node name
+        /// Max AABB.
         /// </summary>
-        public KeyValuePair<string, string> Element2;
+        public BoundingBox Boundaries { get; set; }
 
         /// <summary>
-        /// Max AABB
+        /// BB based on points of intersection.
         /// </summary>
-        public BoundingBox Boundaries;
+        public BoundingBox MinIntersectionBoundaries { get; set; }
 
         /// <summary>
-        /// BB based on points of intersection
+        /// BB based on AABB intersection.
         /// </summary>
-        public BoundingBox MinIntersectionBoundaries;
+        public BoundingBox IntersectionBoundaties { get; set; }
 
         /// <summary>
-        /// BB based on AABB intersecion
+        /// Collection of intersected triangles.
         /// </summary>
-        public BoundingBox IntersectionBoundaties;
-
-        /// <summary>
-        /// collection of interseted triangles
-        /// </summary>
-        internal ConcurrentBag<TriangleCollision> Collisions;
+        internal ConcurrentBag<TriangleCollision> Collisions { get; set; }
 
         internal CollisionResult(KeyValuePair<string, string> element1, KeyValuePair<string, string> element2, BoundingBox boundaries,
             BoundingBox intersecionBoundaries, ConcurrentBag<TriangleCollision> collisions)
@@ -55,11 +56,11 @@ namespace GS.Gltf.Collision
                     collisionPoints.AddRange(collision.IntersectionPoints);
                 }
             }
+
             if (collisionPoints.Count > 0)
             {
                 MinIntersectionBoundaries = new BoundingBox(collisionPoints);
             }
         }
     }
-
 }

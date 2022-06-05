@@ -36,5 +36,6 @@ jobs:
       run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}\*.nupkg -k ${{ secrets.NUGET_PUBLIC_PACKAGES }} -s ${{ env.NUGET_SOURCE_URL }} --skip-duplicate
 
     - name: Push package to GitHub
-      run: dotnet nuget add source ${{ env.NUGET_SOURCE_URL }} --name "githubfeed" --username "ibober" --password "${{ secrets.GITHUBFEED_PACKAGES }}" --store-password-in-clear-text
-    - run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}\*.nupkg -s githubfeed
+    #- run: dotnet nuget add source ${{ env.NUGET_SOURCE_URL }} --name "githubfeed" --username "ibober" --password "${{ secrets.GITHUBFEED_PACKAGES }}" --store-password-in-clear-text
+    - run: dotnet nuget update source ${{ env.NUGET_SOURCE_URL }} --name "githubfeed" --username "ibober" --password "${{ secrets.GITHUBFEED_PACKAGES }}" --store-password-in-clear-text
+    - run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}\*.nupkg -s githubfeed --skip-duplicate

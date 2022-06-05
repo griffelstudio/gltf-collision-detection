@@ -1,4 +1,4 @@
-name: Deploy a package to NuGet
+name: Deploy a package
 
 on:
   push:
@@ -12,7 +12,7 @@ env:
 
 jobs:
   deploy:
-    name: Deploy a package to NuGet
+    name: Deploy a package
     runs-on: windows-latest
     steps:
     - name: Checkout
@@ -31,5 +31,18 @@ jobs:
     - name: Pack project
       run: dotnet pack ${{ env.PROJECT_PATH }} --no-restore --no-build --configuration Release --include-symbols -p:PackageVersion=${{ steps.version.outputs.version-without-v }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
 
-    - name: Push package
-      run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}\*.nupkg -k ${{ secrets.NUGET_PUBLIC_PACKAGES }} -s githubfeed
+    #- name: Push package to NuGet
+    #  run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}\*.nupkg -k ${{ secrets.NUGET_PUBLIC_PACKAGES }} -s ${{ env.NUGET_SOURCE_URL }}
+
+    - name: Push package to GitHub
+      #run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}\*.nupkg -k ${{ secrets.GITHUBFEED_PACKAGES }} -s githubfeed
+      run:
+        dotnet nuget add source ${{ env.NUGET_SOURCE_URL }} -k ${{ secrets.NUGET_PUBLIC_PACKAGES }}
+        dotnet nuget add source "https://nuget.pkg.github.com/griffelstudio/index.json" --name "githubfeed" --username "ibober" --password "${{ secrets.GITHUBFEED_PACKAGES }}" --store-password-in-clear-text
+        dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}\*.nupkg
+
+    #- name: Publish web Artifact
+    #  uses: actions/upload-artifact@v3
+    #  with:
+    #    name: web
+    #    path: ${{ github.workspace }}/web

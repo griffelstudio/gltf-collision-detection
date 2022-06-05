@@ -5,13 +5,21 @@
 		<Authors>Alex Nazarov, Kiryl Ambrazheichyk</Authors>
 		<Company>Griffel Studio</Company>
 		<Product>glTF Collision Detection</Product>
+		<IsPackable>true</IsPackable>
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 	</PropertyGroup>
 
 	<!--Package related properties-->
 	<PropertyGroup>
-		<IsPackable>true</IsPackable>
-		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+		<PackageId>GS.Gltf.Collisions.</PackageId>
+		<PackageDescription>Clash detection between meshes of glTF files.</PackageDescription>
+		<PackageTags>gltf glb clash collision intersection</PackageTags>
+		<PackageProjectUrl>https://github.com/griffelstudio/gltf-collision-detection</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/griffelstudio/gltf-collision-detection</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	</PropertyGroup>
 
 	<!--Output related properties-->

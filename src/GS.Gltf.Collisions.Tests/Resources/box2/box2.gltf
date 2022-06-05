@@ -1,0 +1,128 @@
+{
+  "accessors": [
+    {
+      "bufferView": 0,
+      "componentType": 5126,
+      "count": 24,
+      "type": "VEC3",
+      "max": [
+        0.304,
+        0.381,
+        0.0
+      ],
+      "min": [
+        -0.304,
+        -0.381,
+        -0.304
+      ]
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 24,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "componentType": 5123,
+      "count": 36,
+      "type": "SCALAR"
+    }
+  ],
+  "asset": {
+    "generator": "glTF Exporter addin for Revit",
+    "version": "2.0"
+  },
+  "buffers": [
+    {
+      "uri": "box2.bin",
+      "byteLength": 648
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 288,
+      "byteStride": 12,
+      "target": 34962,
+      "name": "0"
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 288,
+      "byteLength": 288,
+      "byteStride": 12,
+      "target": 34962,
+      "name": "1"
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 576,
+      "byteLength": 72,
+      "target": 34963,
+      "name": "3"
+    }
+  ],
+  "meshes": [
+    {
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0,
+            "NORMAL": 1
+          },
+          "indices": 2
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "children": [
+        1
+      ],
+      "rotation": [
+        0.707106769,
+        0.0,
+        0.0,
+        -0.707106769
+      ],
+      "name": "box2"
+    },
+    {
+      "children": [
+        2
+      ],
+      "name": "box2 OriginalDocument"
+    },
+    {
+      "children": [
+        3
+      ],
+      "name": "Storey 4"
+    },
+    {
+      "children": [
+        4
+      ],
+      "name": "Structural Columns 4"
+    },
+    {
+      "mesh": 0,
+      "translation": [
+        -6.81,
+        4.454,
+        0.0
+      ],
+      "name": "282366"
+    }
+  ],
+  "scenes": [
+    {
+      "nodes": [
+        0
+      ],
+      "name": "{3D}"
+    }
+  ]
+}

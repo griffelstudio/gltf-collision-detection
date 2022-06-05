@@ -12,7 +12,7 @@
 
 	<!--Package related properties-->
 	<PropertyGroup>
-		<PackageId>GS.Gltf.Collisions.</PackageId>
+		<PackageId>GS.Gltf.Collisions</PackageId>
 		<PackageDescription>Clash detection between meshes of glTF files.</PackageDescription>
 		<PackageTags>gltf glb clash collision intersection</PackageTags>
 		<PackageProjectUrl>https://github.com/griffelstudio/gltf-collision-detection</PackageProjectUrl>

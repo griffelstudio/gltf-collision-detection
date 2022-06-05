@@ -36,9 +36,8 @@ jobs:
 
     - name: Push package to GitHub
       #run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}\*.nupkg -k ${{ secrets.GITHUBFEED_PACKAGES }} -s githubfeed
-      run:
-        dotnet nuget add source "https://nuget.pkg.github.com/griffelstudio/index.json" --name "githubfeed" --username "ibober" --password "${{ secrets.GITHUBFEED_PACKAGES }}" --store-password-in-clear-text
-        dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}\*.nupkg -s githubfeed
+      run: dotnet nuget add source "https://nuget.pkg.github.com/griffelstudio/index.json" --name "githubfeed" --username "ibober" --password "${{ secrets.GITHUBFEED_PACKAGES }}" --store-password-in-clear-text
+    - run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}\*.nupkg -s githubfeed
 
     #- name: Publish web Artifact
     #  uses: actions/upload-artifact@v3

@@ -1,5 +1,4 @@
 ﻿using GS.Gltf.Collisions.Geometry;
-using GS.Gltf.Collisions.Helper;
 using GS.Gltf.Collisions.Helpers;
 using GS.Gltf.Collisions.Interfaces;
 using GS.Gltf.Collisions.Models;

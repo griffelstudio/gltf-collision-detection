@@ -4,7 +4,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("GS.Gltf.Collisions.Tests")]
-namespace GS.Gltf.Collisions.Helper
+namespace GS.Gltf.Collisions.Helpers
 {
     internal static class GeometryHelper
     {

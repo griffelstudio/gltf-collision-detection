@@ -1,4 +1,4 @@
-﻿using GS.Gltf.Collisions.Helper;
+﻿using GS.Gltf.Collisions.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Numerics;

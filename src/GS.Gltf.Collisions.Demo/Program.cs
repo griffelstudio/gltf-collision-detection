@@ -64,7 +64,7 @@ namespace GS.Gltf.Collisions.Demo
             };
 
             var detector = new CollisionDetector(settings, logger);
-            var detectResult = detector.Detect();
+            _ = detector.Detect();
         }
     }
 }

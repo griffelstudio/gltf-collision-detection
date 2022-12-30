@@ -137,7 +137,6 @@ namespace GS.Gltf.Collisions.Helpers
             float c = 1.0f - (Vector3.Dot(v, cp)) / Vector3.Dot(v, ca);
 
             return new Vector3(a, b, c);
-
         }
 
         public static float Magnitude(Vector3 vec)

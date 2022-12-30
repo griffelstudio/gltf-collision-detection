@@ -46,23 +46,23 @@ namespace GS.Gltf.Collisions
         /// <returns></returns>
         public List<CollisionResult> Detect()
         {
-            logger.LogInformation("Start collision detection.\n");
-            logger.LogInformation("Finding elements to check for collisions...\n");
+            logger?.LogInformation("Start collision detection.\n");
+            logger?.LogInformation("Finding elements to check for collisions...\n");
 
             var reader = new GltfReader(Settings.ModelPaths);
             rawModels = reader.RawModels;
             models = reader.Models;
             var modelCollisionPairs = MakeModelsCollisionPairs(models);
             var checkedModelCollisionPairs = CheckModelsCollisionPairs(modelCollisionPairs); //TODO make parallel?
-            logger.LogInformation("Detecting collisions...\n");
+            logger?.LogInformation("Detecting collisions...\n");
             var result = CheckElementCollisionPair(checkedModelCollisionPairs);
 
             List<CollisionResult> new_result = default;
             new_result = result.ToList().Where(x => x.MinIntersectionBoundaries != null && x.Element1.Value != x.Element2.Value).ToList();
-            logger.LogInformation("Writing results...\n");
+            logger?.LogInformation("Writing results...\n");
             SaveCollisionModels(new_result);
-            logger.LogInformation($"Result saved to {Path.Combine(Settings.OutputSavePath, Settings.OutputFilename)}\n");
-            logger.LogInformation("Finish collision detection.\n");
+            logger?.LogInformation($"Result saved to {Path.Combine(Settings.OutputSavePath, Settings.OutputFilename)}\n");
+            logger?.LogInformation("Finish collision detection.\n");
 
             return result.ToList();
         }
@@ -108,7 +108,7 @@ namespace GS.Gltf.Collisions
                     {
                         bool isElemsCollide = element.GetBoundingBox().IsCollideWith(othElement.GetBoundingBox(), Settings.Delta);
                         Interlocked.Increment(ref count);
-                        logger.LogInformation($"\r\t{count} meshes from {totalPairs} checked");
+                        logger?.LogInformation($"\r\t{count} meshes from {totalPairs} checked");
 
                         if (isElemsCollide)
                         {
@@ -134,7 +134,7 @@ namespace GS.Gltf.Collisions
 
                 }
             });
-            logger.LogInformation($"\r\t{totalPairs} meshes from {totalPairs} checked\n");
+            logger?.LogInformation($"\r\t{totalPairs} meshes from {totalPairs} checked\n");
             return result;
         }
 

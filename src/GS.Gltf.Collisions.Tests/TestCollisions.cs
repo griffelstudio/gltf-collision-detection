@@ -81,7 +81,7 @@ namespace GS.Gltf.Collisions.Tests
 
             List<string> inputfiles = new List<string>()
             {
-                Path.Combine(testRootPath, "Resources", "base_collisions_level15", "CollisionTest.gltf"),
+                Path.Combine(testRootPath, "Resources", "base_collisions_level15", "CollisionDetectionTestPrimitives.gltf"),
             };
 
             var settings = new CollisionSettings(inputfiles)
